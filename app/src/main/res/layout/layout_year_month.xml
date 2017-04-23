@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/dp_10"
+        android:paddingLeft="@dimen/dp_10"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/red"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item0"/>
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item1"/>
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item2"/>
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item3"/>
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item4"/>
+
+        <include layout="@layout/gridview_item_date"
+            android:id="@+id/layout_month_item5"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="black">#000</color>
+    <color name="blue">#f73066d4</color>
+    <color name="green">#0f0</color>
+    <color name="cyan">#0ff</color>
+    <color name="red">#f00</color>
+    <color name="pink">#f0f</color>
+    <color name="yellow">#ff0</color>
+    <color name="white">#fff</color>
+
+    <!--viewpager-->
+    <color name="color_421678">#421678</color>
+    <!--baseactivity颜色值-->
+    <color name="color_5f4fc6">#5f4fc6</color>
+    <!--省份分割线-->
+    <color name="color_C7C7C7">#C7C7C7</color>
+    <color name="color_88d0d0d0">#88d0d0d0</color>
+    <color name="color_8888">#8888</color>
+    <!--界面默认背景颜色-->
+    <color name="color_efeff4">#efeff4</color>
+    <!--eventDialog默认背景颜色-->
+    <color name="color_663066d4">#663066d4</color>
+    <color name="color_6f00">#6f00</color>
+    <color name="color_6ff0">#6ff0</color>
+    <color name="color_66C7C7C7">#66C7C7C7</color>
+
+</resources>

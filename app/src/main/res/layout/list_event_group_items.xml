@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:paddingLeft="@dimen/dp_10"
+    android:paddingRight="@dimen/dp_10"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:layout_gravity="center_vertical"
+    android:background="@color/color_efeff4">
+
+    <TextView
+        android:id="@+id/tv_group_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_16"
+        android:text="农历一月" />
+
+    <TextView
+        android:id="@+id/tv_group_lunar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/sp_12"
+        android:text="农历一月"/>
+</RelativeLayout>

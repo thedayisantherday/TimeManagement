@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_event_dialog"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/color_663066d4">
+
+    <View
+        android:id="@+id/view_emergency_sign"
+        android:layout_width="@dimen/dp_2"
+        android:layout_height="match_parent"
+        android:background="@color/blue"/>
+    <TextView
+        android:id="@+id/tv_event_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:textColor="@color/black"
+        android:maxLines="2"/>
+</LinearLayout>

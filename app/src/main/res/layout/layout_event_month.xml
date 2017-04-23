@@ -1,0 +1,70 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tv_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/sp_16"/>
+
+    <View
+        android:id="@+id/view_line_top"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item0" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item1"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item2"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item3"/>
+
+    <View
+        android:id="@+id/view_line_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item4"/>
+
+    <View
+        android:id="@+id/view_line_bottom0"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@color/color_C7C7C7"/>
+
+    <include layout="@layout/viewpager_item_date"
+        android:id="@+id/layout_month_item5"/>
+
+</LinearLayout>

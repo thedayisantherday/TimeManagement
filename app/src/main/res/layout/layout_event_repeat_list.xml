@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="@dimen/dp_10"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:background="@color/color_efeff4">
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/black"
+            android:text="3月5日" />
+
+        <TextView
+            android:id="@+id/tv_week_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_10"
+            android:layout_toRightOf="@id/tv_date"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/black"
+            android:text="周六" />
+
+        <TextView
+            android:id="@+id/tv_lunar_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/sp_14"
+            android:text="农历二月"/>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lv_event_list_date"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+
+</LinearLayout>
