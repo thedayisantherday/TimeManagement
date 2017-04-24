@@ -159,7 +159,7 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
     public void initHead(ViewHolder viewHolder) {
         viewHolder.iv_left.setImageResource(R.drawable.icon_share);
         viewHolder.iv_right.setVisibility(View.VISIBLE);
-        viewHolder.iv_right2.setVisibility(View.VISIBLE);
+//        viewHolder.iv_right2.setVisibility(View.VISIBLE);
     }
 
     @Override

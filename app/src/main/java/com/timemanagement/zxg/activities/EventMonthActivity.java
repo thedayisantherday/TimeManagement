@@ -50,7 +50,22 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
         setView(R.layout.activity_event_month);
 
         initView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initData();
+    }
+
+    /**
+     * 解决getIntent()取到的intent为旧的intent
+     * @param intent
+     */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     private void initView() {
@@ -80,7 +95,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
         }
 
         mViewHolder.tv_left.setVisibility(View.VISIBLE);
-        mViewHolder.tv_left.setText(calendar.get(Calendar.YEAR)+"年");
+        mViewHolder.tv_left.setText(mYear+"年");
 
         offset =  (mYear-mCalendar.get(Calendar.YEAR))*12+mMonth-(mCalendar.get(Calendar.MONTH)+1);
         LogUtils.i("EventMonthActivity", "mYear:"+mYear+", mMonth:"+mMonth);
@@ -234,9 +249,9 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
         viewHolder.tv_left.setVisibility(View.VISIBLE);
         viewHolder.iv_right.setVisibility(View.VISIBLE);
         viewHolder.iv_right.setOnClickListener(this);
-        viewHolder.iv_right1.setVisibility(View.VISIBLE);
+//        viewHolder.iv_right1.setVisibility(View.VISIBLE);
         viewHolder.iv_right1.setOnClickListener(this);
-        viewHolder.iv_right2.setVisibility(View.VISIBLE);
+//        viewHolder.iv_right2.setVisibility(View.VISIBLE);
     }
 
     public static void startSelf(Context context, int year, int month){

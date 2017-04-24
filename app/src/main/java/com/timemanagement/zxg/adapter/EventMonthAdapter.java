@@ -214,9 +214,7 @@ public class EventMonthAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, EventDayActivity.class);
-                    intent.putExtra("year", Integer.valueOf(_dayDateModel.getYear()));
-                    intent.putExtra("month", Integer.valueOf(_dayDateModel.getMonth()));
-                    intent.putExtra("day", Integer.valueOf(_dayDateModel.getDay()));
+                    intent.putExtra("dayDateModel", _dayDateModel);
                     ((EventMonthActivity)mContext).setResult(RESULT_OK, intent);
                     ((EventMonthActivity)mContext).finish();
                 }

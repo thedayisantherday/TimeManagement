@@ -49,7 +49,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
     private ViewPagerAdapter mViewPagerAdapter;
 
     private int mPosition = 2; //当前banner的位置
-    private int offsetWeek = 0; //与当前日期相差多少周
+    private int offsetWeek; //与当前日期相差多少周
 
     private Calendar calendar = Calendar.getInstance();
 
@@ -66,12 +66,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         mContext = this;
 
         initView();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initData();
+        initData(null);
     }
 
     private void initView(){
@@ -117,6 +112,10 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 // 将长按位置对应的时间传给EventEditActivity
                 EventModel _eventModel = new EventModel();
                 Date _date = calendar.getTime();
+                if (mDayDateModel != null) {
+                    _date =new Date(Integer.valueOf(mDayDateModel.getYear())-1900,
+                            Integer.valueOf(mDayDateModel.getMonth())-1, Integer.valueOf(mDayDateModel.getDay()));
+                }
                 _eventModel.setDate(_date);
                 float _y = pressY>view_event_container.offset/2 ? pressY-view_event_container.offset/2 : 0;
                 int _minutes = (int)(_y / view_event_container.mTotalHeight * EventContainerView.MINITES_OF_DAY);
@@ -133,13 +132,19 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         });
     }
 
-    private void initData(){
+    private void initData(DayDateModel dayDateModel){
         mViewHolder.tv_left.setText(calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月");
 
+        mPosition = 2;
+        offsetWeek = 0;
+        mDayDateModels.clear();
         for (int i = 0; i < 4; i++) {
             mDayDateModels.add(DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (i - 1) * 7)));
         }
-        mViewPagerAdapter = new ViewPagerAdapter(vp_views, mDayDateModels);
+        if (mViewPagerAdapter == null) {
+            mViewPagerAdapter = new ViewPagerAdapter(vp_views, mDayDateModels);
+        }
+        mViewPagerAdapter.notifyDataSetChanged();
         vp_date.setAdapter(mViewPagerAdapter);
         vp_date.setOffscreenPageLimit(1);
         vp_date.setCurrentItem(2);
@@ -153,7 +158,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
             }
         }, 500);
 
-        getEventOfDate(null);
+        getEventOfDate(dayDateModel);
     }
 
     /**
@@ -223,42 +228,53 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case EVENT_MONTH:
-                    int year = data.getIntExtra("year", calendar.get(Calendar.YEAR));
-                    int month = data.getIntExtra("month", calendar.get(Calendar.MONTH));
-                    int day = data.getIntExtra("day", calendar.get(Calendar.DAY_OF_MONTH));
-                    calendar.set(year, month - 1, day);
-
-                    vp_date.setCurrentItem(2);
-                    mViewHolder.tv_left.setText(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
-                    for (int i = 0; i < 4; i++) {
-                        mDayDateModels.set(i, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (i - 1) * 7)));
+                    DayDateModel _dayDateModel = (DayDateModel) data.getSerializableExtra("dayDateModel");
+                    if (_dayDateModel != null) {
+                        calendar.set(Integer.valueOf(_dayDateModel.getYear()),
+                                Integer.valueOf(_dayDateModel.getMonth()) - 1, Integer.valueOf(_dayDateModel.getDay()));
                     }
+                    EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
+
+                    initData(_dayDateModel);
+//                    vp_date.setCurrentItem(2);
+//                    mViewHolder.tv_left.setText(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
+//                    for (int i = 0; i < 4; i++) {
+//                        mDayDateModels.set(i, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (i - 1) * 7)));
+//                    }
 //                    if (mViewPagerAdapter == null) {
 //                        mViewPagerAdapter = new ViewPagerAdapter(vp_views, mDayDateModels);
 //                    }
 //                    vp_date.setAdapter(mViewPagerAdapter);
-                    EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
-                    mViewPagerAdapter.notifyDataSetChanged();
+//                    mViewPagerAdapter.notifyDataSetChanged();
                     break;
                 case EVENT_EDIT:
-                    setEventDialog((EventModel) data.getSerializableExtra("event_model"));
+                    EventModel _eventModel = (EventModel) data.getSerializableExtra("event_model");
+                    calendar.set(_eventModel.getDate().getYear()+1900,
+                            _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
+                    setEventDialog(_eventModel);
                     LogUtils.i("onActivityResult", "Remind:"+mEventDialog.mEventModel.getRemind()+", RemindAgain"+mEventDialog.mEventModel.getRemindAgain());
+                    DayDateModel dayDateModel = new DayDateModel();
+                    dayDateModel.setYear(_eventModel.getDate().getYear()+1900+"");
+                    dayDateModel.setMonth(_eventModel.getDate().getMonth()+1+"");
+                    dayDateModel.setDay(_eventModel.getDate().getDate()+"");
+                    initData(dayDateModel);
                     break;
             }
         }
     }
 
     private void getEventOfDate(DayDateModel dayDateModel) {
+        Calendar _calendar = Calendar.getInstance();
         if (dayDateModel != null) {
-            calendar.set(Integer.valueOf(dayDateModel.getYear()),
-                    Integer.valueOf(dayDateModel.getMonth())-1, Integer.valueOf(dayDateModel.getDay()));
             for (int i = 2; i < mEventDialogCount; i++) {
                 view_event_container.removeView(view_event_container.getChildAt(2));
             }
+            _calendar.set(Integer.valueOf(dayDateModel.getYear()),
+                    Integer.valueOf(dayDateModel.getMonth())-1, Integer.valueOf(dayDateModel.getDay()));
         }
 
         // 为当天的所有事件添加一个EventDialog
-        List<EventModel> eventModels = new DatabaseUtil(mContext).queryByDate(calendar.getTime());
+        List<EventModel> eventModels = new DatabaseUtil(mContext).queryByDate(_calendar.getTime());
         if (eventModels != null && eventModels.size() > 0) {
             for (int i=0; i < eventModels.size(); i++) {
                 mEventDialog = new EventDialog(mContext);
@@ -302,8 +318,8 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         viewHolder.tv_left.setVisibility(View.VISIBLE);
         viewHolder.iv_right.setVisibility(View.VISIBLE);
         viewHolder.iv_right.setOnClickListener(this);
-        viewHolder.iv_right1.setVisibility(View.VISIBLE);
-        viewHolder.iv_right2.setVisibility(View.VISIBLE);
+//        viewHolder.iv_right1.setVisibility(View.VISIBLE);
+//        viewHolder.iv_right2.setVisibility(View.VISIBLE);
     }
 
     public static void startSelf(Context context){
@@ -320,6 +336,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 
         @Override
         public void onPageSelected(int position) {
+            LogUtils.i("onPageSelected", "offsetWeek"+offsetWeek+", position"+position+", mPosition"+mPosition);
             switch (position){
                 case 0:
                     if (mPosition - position == 1){

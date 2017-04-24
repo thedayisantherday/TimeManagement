@@ -3,21 +3,66 @@
 
     <item
         is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="b24e1c688744078e1fa833ffadf696794761bbe5">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-25.0.1_afd46ff1e0624b08d567d5e39fe3af6d8593bbb8.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.0.1/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="772bed2d992b67b9d0327f766cc95cd63031dcd3">
         <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-25.0.1_8bbcb9a8235405991ac6802819800760d77df731.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f7ac4b327fdb9e2ee386f5adc46164927658de4b">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-25.0.1_2784f8d207ec7e8b798c78ee29d3fe9d2d8fcd07.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="00d4c8eebf2b681073c72a26bd0849549e51c7cb">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-25.0.1_5d00109e33e308ec77634c6d110a3c895149b7de.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="bc7e99e8d0fc279a05aa91378530f467ad62d443">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-ui-25.0.1_5e781ba2e5d3c1649ee9344eb6c42539ada98f30.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6a1479afe9f1b3645e1cd9a87318976893472818">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-25.0.1_2ced9ae59784e4386d799efd08ed6bf9d5b43f6c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-25.0.1_9e206af0d82e447e03596726cfec1bf9a804317f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/25.0.1/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b24e1c688744078e1fa833ffadf696794761bbe5">
+        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-25.0.1_afd46ff1e0624b08d567d5e39fe3af6d8593bbb8.jar" />
     </item>
     <item
         is-multidex="false"
@@ -57,48 +102,12 @@
     </item>
     <item
         is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="f7ac4b327fdb9e2ee386f5adc46164927658de4b">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-25.0.1_2784f8d207ec7e8b798c78ee29d3fe9d2d8fcd07.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="00d4c8eebf2b681073c72a26bd0849549e51c7cb">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-utils-25.0.1_5d00109e33e308ec77634c6d110a3c895149b7de.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="bc7e99e8d0fc279a05aa91378530f467ad62d443">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-core-ui-25.0.1_5e781ba2e5d3c1649ee9344eb6c42539ada98f30.jar" />
-    </item>
-    <item
-        is-multidex="false"
         jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/transition/25.0.1/jars/classes.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.0"
         sha1="c1b6ab157e8e12cb08b9ee82bb5e3c5d22632eb3">
         <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-transition-25.0.1_1140811b1987d1f0606408a84c9bcb2bf5adfe75.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="6a1479afe9f1b3645e1cd9a87318976893472818">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-media-compat-25.0.1_2ced9ae59784e4386d799efd08ed6bf9d5b43f6c.jar" />
     </item>
     <item
         is-multidex="false"
@@ -153,15 +162,6 @@
         revision="25.0.0"
         sha1="51eba4a4dd73044f90a9d58dd7ca34adbebfcf4e">
         <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-compat-25.0.1_5402de4150383cb85b0b8592e29f1d2ee668c1ba.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/exploded-aar/com.android.support/support-v4/25.0.1/jars/classes.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
-        <dex dex="/Users/zxg/work/ASProjects/TimeManagement/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-25.0.1_9e206af0d82e447e03596726cfec1bf9a804317f.jar" />
     </item>
 
 </items>

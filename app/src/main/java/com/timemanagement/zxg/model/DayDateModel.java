@@ -1,10 +1,12 @@
 package com.timemanagement.zxg.model;
 
+import java.io.Serializable;
+
 /**
  * Created by zxg on 17/2/13.
  */
 
-public class DayDateModel {
+public class DayDateModel implements Serializable {
 
     private String year;
     private String month;
