@@ -34,12 +34,17 @@ public class DateModelUtil {
             dayDateModels[i].setMonth(_calendar.get(Calendar.MONTH)+1+"");
             dayDateModels[i].setDay(_calendar.get(Calendar.DAY_OF_MONTH)+"");
             dayDateModels[i].setWeek(_calendar.get(Calendar.DAY_OF_WEEK)+"");
+            if (_calendar.get(Calendar.YEAR) >= 1900 && _calendar.get(Calendar.YEAR) <= 2100)
+            dayDateModels[i].setLunar(new LunarUtils(_calendar).toString());
         }
         return dayDateModels;
     }
 
+    public static MonthDateModel getMonthDateModel(int year, int month) {
+        return getMonthDateModel(year, month, true);
+    }
 
-    public static MonthDateModel getMonthDateModel(int year, int month){
+    public static MonthDateModel getMonthDateModel(int year, int month, boolean isLunar){
         if (year<0 || month<0 || month>12){
             return null;
         }
@@ -63,6 +68,10 @@ public class DateModelUtil {
             cal.setTime(date);
             int week_index = cal.get(Calendar.DAY_OF_WEEK) - 1;
             dayDateModel.setWeek(String.valueOf(week_index));
+            if (isLunar && year >= 1900 && year <= 2100) {
+                LunarUtils lunarUtils = new LunarUtils(cal);
+                dayDateModel.setLunar(lunarUtils.get_month() + lunarUtils.get_date());
+            }
             listDay.add(dayDateModel);
         }
         monthDateModel.setDayDateModels(listDay);

@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.adapter.EventMonthAdapter;
-import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.DateModelUtil;
@@ -19,7 +18,6 @@ import com.timemanagement.zxg.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class EventMonthActivity extends BaseActivity  implements AbsListView.OnScrollListener, View.OnClickListener {
@@ -118,45 +116,15 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
                     if (year<=1){
                         continue;
                     }
-                    list.add(getMonthDateModel(year-1, month-(NUM_MONTH-1)/2+i+12));
+                    list.add(DateModelUtil.getMonthDateModel(year-1, month-(NUM_MONTH-1)/2+i+12));
                 } else if (month-(NUM_MONTH-1)/2+i<=12){
-                    list.add(getMonthDateModel(year, month-(NUM_MONTH-1)/2+i));
+                    list.add(DateModelUtil.getMonthDateModel(year, month-(NUM_MONTH-1)/2+i));
                 } else {
-                    list.add(getMonthDateModel(year+1, month-(NUM_MONTH-1)/2+i-12));
+                    list.add(DateModelUtil.getMonthDateModel(year+1, month-(NUM_MONTH-1)/2+i-12));
                 }
             }
         }
         return list;
-    }
-
-    public MonthDateModel getMonthDateModel(int year, int month){
-        if (year<0 || month<=0 || month>12){
-            return null;
-        }
-        MonthDateModel monthDateModel = new MonthDateModel();
-        monthDateModel.setYear(String.valueOf(year));
-        monthDateModel.setMonth(String.valueOf(month));
-
-        List<DayDateModel> listDay =  new ArrayList<DayDateModel>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month-1);
-        int maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        for (int j = 1; j <= maxDays; j++) {
-            DayDateModel dayDateModel = new DayDateModel();
-            dayDateModel.setYear(String.valueOf(year));
-            dayDateModel.setMonth(String.valueOf(month));
-            dayDateModel.setDay(String.valueOf(j));
-
-            Calendar cal = Calendar.getInstance();
-            Date date = new Date(year-1900, month-1, j);
-            cal.setTime(date);
-            int week_index = cal.get(Calendar.DAY_OF_WEEK) - 1;
-            dayDateModel.setWeek(String.valueOf(week_index));
-            listDay.add(dayDateModel);
-        }
-        monthDateModel.setDayDateModels(listDay);
-        return monthDateModel;
     }
 
     @Override
@@ -198,7 +166,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             if (firstVisibleItem < frontPoint) {
                 int[] start_month = DateModelUtil.getStandardMonth(
                         init_year + num_year, init_month + num_month-(NUM_MONTH-1)/2);
-                MonthDateModel model = getMonthDateModel(start_month[0], start_month[1]);
+                MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
 
                 num = (firstVisibleItem - INIT_POSITION) % NUM_MONTH;
                 if (num < 0){
@@ -211,7 +179,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             if (firstVisibleItem > frontPoint) {
                 int[] start_month = DateModelUtil.getStandardMonth(
                         init_year + num_year, init_month + num_month+(NUM_MONTH-1)/2);
-                MonthDateModel model = getMonthDateModel(start_month[0], start_month[1]);
+                MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
 
                 num = (firstVisibleItem - INIT_POSITION - (NUM_MONTH-(NUM_MONTH-1)/2*2)) % NUM_MONTH;
                 if (num < 0){
@@ -222,6 +190,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             }
             frontPoint = firstVisibleItem;
         }else {
+            LogUtils.i("mMonthDateModels", mMonthDateModels.toString());
             mViewHolder.tv_left.setText(eventMonthAdapter.getItem(INIT_POSITION).getYear() + "年");
             isFirst = false;
         }
@@ -236,7 +205,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             lv_month.setSelection(INIT_POSITION);
             tv_left.setText(mMonthDateModels.get(5).getYear()+"年");
         } else {
-            EventDayActivity.startSelf(mContext);
+            EventDayActivity.startSelf(mContext, null, null);
             ActivityManager.getInstance().finishActivity(mthis);
         }
     }
@@ -267,6 +236,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             case R.id.ll_left:
                 EventYearActivity.startSelf(mContext,
                         Integer.valueOf(eventMonthAdapter.getItem(frontPoint).getYear()));
+                ActivityManager.getInstance().finishActivity(mthis);
                 break;
             case R.id.iv_right:
                 EventEditActivity.startSelf(mContext, 0, null);
@@ -284,9 +254,10 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
                 gotoToday();
                 break;
             case R.id.tv_repeat:
+                EventRepeatActivity.startSelf(mContext);
 //            case tv_out_date:
-                EventListActivity.startSelf(mContext);
-                ActivityManager.getInstance().finishActivity(mthis);
+//                EventListActivity.startSelf(mContext);
+//                ActivityManager.getInstance().finishActivity(mthis);
                 break;
 
         }

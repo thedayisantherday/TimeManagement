@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="com.timemanagement.zxg.activities.EventDayActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +31,7 @@
         <activity android:name="com.timemanagement.zxg.activities.TestActivity" />
         <activity android:name="com.timemanagement.zxg.activities.MainActivity" />
         <activity
-            android:name="com.timemanagement.zxg.activities.EventMonthActivity"
-            android:launchMode="singleInstance" />
+            android:name="com.timemanagement.zxg.activities.EventMonthActivity" />
         <activity
             android:name="com.timemanagement.zxg.activities.EventYearActivity" />
         <activity

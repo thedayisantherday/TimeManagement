@@ -223,8 +223,7 @@ public class LunarUtils {
                     "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪",
                     "冬至" };
 
-    public static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
-            " yyyy年MM月dd日 ");
+    public static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(" yyyy年MM月dd日 ");
     final static long[] lunarInfo = new long[]
             { 0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0,
                     0x09ad0, 0x055d2, 0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255,
@@ -429,9 +428,7 @@ public class LunarUtils {
 
     public String toString()
     {
-        return
- cyclical() + "年" +
-(leap ? "闰" : "")
+        return cyclical() + "年" + (leap ? "闰" : "")
                 + chineseNumber[month - 1] + "月" + getChinaDayString(day);
     }
 
@@ -447,7 +444,7 @@ public class LunarUtils {
 
     public String get_month()
     {// 返回阴历的月份
-        return chineseNumber[month - 1];
+        return (leap ? "闰" : "") + chineseNumber[month - 1] + "月";
     }
 
     public String get_date()

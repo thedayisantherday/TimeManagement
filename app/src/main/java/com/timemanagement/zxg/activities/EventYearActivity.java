@@ -93,7 +93,7 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
         List<MonthDateModel> list =  new ArrayList<MonthDateModel>();
         if (year>0){
             for (int i = 1; i <= 12; i++) {
-                list.add(DateModelUtil.getMonthDateModel(year, i));
+                list.add(DateModelUtil.getMonthDateModel(year, i, false));
             }
         }
         return list;
@@ -159,6 +159,7 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
     public void initHead(ViewHolder viewHolder) {
         viewHolder.iv_left.setImageResource(R.drawable.icon_share);
         viewHolder.iv_right.setVisibility(View.VISIBLE);
+        viewHolder.iv_right.setOnClickListener(this);
 //        viewHolder.iv_right2.setVisibility(View.VISIBLE);
     }
 
@@ -172,12 +173,13 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
                 gotoToday();
                 break;
             case R.id.tv_repeat:
+                EventRepeatActivity.startSelf(mContext);
 //            case tv_out_date:
-                ActivityManager activityManager = ActivityManager.getInstance();
-                for (int i = 0; i < 2; i++) {
-                    activityManager.finishActivity(activityManager.getTopActivity());
-                }
-                EventListActivity.startSelf(mContext);
+//                ActivityManager activityManager = ActivityManager.getInstance();
+//                for (int i = 0; i < 2; i++) {
+//                    activityManager.finishActivity(activityManager.getTopActivity());
+//                }
+//                EventListActivity.startSelf(mContext);
                 break;
         }
     }

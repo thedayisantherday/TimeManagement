@@ -1,7 +1,6 @@
 package com.timemanagement.zxg.widget;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -46,10 +45,7 @@ public class EventDialog {
             public void onClick(View v) {
                 EventDayActivity.mEventDialog = self;
                 LogUtils.i("view_event_dialog onClick","view_event_dialog onClick");
-                Intent intent = new Intent(mContext, EventEditActivity.class);
-                intent.putExtra("eventModel", mEventModel);
-                intent.putExtra("type", 1);
-                ((EventDayActivity)mContext).startActivityForResult(intent, EventDayActivity.EVENT_EDIT);
+                EventEditActivity.startSelf(mContext, 1, mEventModel);
             }
         });
     }

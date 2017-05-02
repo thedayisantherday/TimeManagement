@@ -53,7 +53,6 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 
     private Calendar calendar = Calendar.getInstance();
 
-    public static final int EVENT_MONTH = 1;
     public static final int EVENT_EDIT = 2;
 
     public static int mEventDialogCount = 2;
@@ -66,7 +65,50 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         mContext = this;
 
         initView();
-        initData(null);
+    }
+
+    /**
+     * 解决getIntent()取到的intent为旧的intent
+     * @param intent
+     */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        DayDateModel _dayDateModel = (DayDateModel) getIntent().getSerializableExtra("dayDateModel");
+        if (_dayDateModel != null) {
+            calendar.set(Integer.valueOf(_dayDateModel.getYear()),
+                    Integer.valueOf(_dayDateModel.getMonth()) - 1, Integer.valueOf(_dayDateModel.getDay()));
+            EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
+        }
+
+        EventModel _eventModel = (EventModel) getIntent().getSerializableExtra("eventModel");
+        if (_eventModel != null) {
+            calendar.set(_eventModel.getDate().getYear() + 1900,
+                    _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
+            EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
+
+            _dayDateModel = new DayDateModel();
+            _dayDateModel.setYear(_eventModel.getDate().getYear() + 1900 + "");
+            _dayDateModel.setMonth(_eventModel.getDate().getMonth() + 1 + "");
+            _dayDateModel.setDay(_eventModel.getDate().getDate() + "");
+
+            int hour1 = _eventModel.getRemind().getHours();
+            int minute1 = _eventModel.getRemind().getMinutes();
+            int marginTop = view_event_container.offset / 2 + view_event_container.mTotalHeight * (hour1 * 60 + minute1) / EventContainerView.MINITES_OF_DAY;
+            scrollTo(marginTop);
+        }
+
+        initData(_dayDateModel);
+        if (_eventModel == null) {
+            gotoCurrent();
+        }
     }
 
     private void initView(){
@@ -125,9 +167,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 _date.setMinutes(_minute - _minute%5);
                 _eventModel.setRemind(_date);
 //                _eventModel.setRemindAgain(_date);
-                Intent intent = new Intent(mContext, EventEditActivity.class);
-                intent.putExtra("eventModel", _eventModel);
-                startActivityForResult(intent, EVENT_EDIT);
+                EventEditActivity.startSelf(mContext, 0, _eventModel);
             }
         });
     }
@@ -149,6 +189,14 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         vp_date.setOffscreenPageLimit(1);
         vp_date.setCurrentItem(2);
         vp_date.addOnPageChangeListener(new EventDayOnPageChangeListener());
+
+        getEventOfDate(dayDateModel);
+    }
+
+    /**
+     * view_event_container滑动扫到当前时间对于的位置
+     */
+    private void gotoCurrent() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -157,8 +205,6 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 LogUtils.i("EventDayActivity", "EventDayActivity sv_event_container: "+sv_event_container.getHeight());
             }
         }, 500);
-
-        getEventOfDate(dayDateModel);
     }
 
     /**
@@ -176,20 +222,16 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ll_left:
-                Intent intent = new Intent(mContext, EventMonthActivity.class);
                 if (mDayDateModel == null || mDayDateModel.getYear().equals("") || mDayDateModel.getMonth().equals("")){
                     Calendar calendar = Calendar.getInstance();
-                    intent.putExtra("year", calendar.get(Calendar.YEAR));
-                    intent.putExtra("month", calendar.get(Calendar.MONTH));
+                    EventMonthActivity.startSelf(mContext, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
                 } else {
-                    intent.putExtra("year", Integer.valueOf(mDayDateModel.getYear()));
-                    intent.putExtra("month", Integer.valueOf(mDayDateModel.getMonth()));
+                    EventMonthActivity.startSelf(mContext,
+                            Integer.valueOf(mDayDateModel.getYear()), Integer.valueOf(mDayDateModel.getMonth()));
                 }
-                startActivityForResult(intent, EVENT_MONTH);
                 break;
             case R.id.iv_right:
-                Intent _intent = new Intent(mContext, EventEditActivity.class);
-                startActivityForResult(_intent, EVENT_EDIT);
+                EventEditActivity.startSelf(mContext, 0, null);
                 break;
             case R.id.iv_right1:
                 break;
@@ -222,46 +264,39 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 + "　农历" + lunar);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case EVENT_MONTH:
-                    DayDateModel _dayDateModel = (DayDateModel) data.getSerializableExtra("dayDateModel");
-                    if (_dayDateModel != null) {
-                        calendar.set(Integer.valueOf(_dayDateModel.getYear()),
-                                Integer.valueOf(_dayDateModel.getMonth()) - 1, Integer.valueOf(_dayDateModel.getDay()));
-                    }
-                    EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
-
-                    initData(_dayDateModel);
-//                    vp_date.setCurrentItem(2);
-//                    mViewHolder.tv_left.setText(calendar.get(Calendar.YEAR) + "年" + (calendar.get(Calendar.MONTH) + 1) + "月");
-//                    for (int i = 0; i < 4; i++) {
-//                        mDayDateModels.set(i, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (i - 1) * 7)));
-//                    }
-//                    if (mViewPagerAdapter == null) {
-//                        mViewPagerAdapter = new ViewPagerAdapter(vp_views, mDayDateModels);
-//                    }
-//                    vp_date.setAdapter(mViewPagerAdapter);
-//                    mViewPagerAdapter.notifyDataSetChanged();
-                    break;
-                case EVENT_EDIT:
-                    EventModel _eventModel = (EventModel) data.getSerializableExtra("event_model");
-                    calendar.set(_eventModel.getDate().getYear()+1900,
-                            _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
-                    setEventDialog(_eventModel);
-                    LogUtils.i("onActivityResult", "Remind:"+mEventDialog.mEventModel.getRemind()+", RemindAgain"+mEventDialog.mEventModel.getRemindAgain());
-                    DayDateModel dayDateModel = new DayDateModel();
-                    dayDateModel.setYear(_eventModel.getDate().getYear()+1900+"");
-                    dayDateModel.setMonth(_eventModel.getDate().getMonth()+1+"");
-                    dayDateModel.setDay(_eventModel.getDate().getDate()+"");
-                    initData(dayDateModel);
-                    break;
-            }
-        }
-    }
+    /**
+     * 调用带参数返回startActivityForResult时，
+     * 两个activity的启动模式都不能是launchMode="singleInstance"
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (resultCode == RESULT_OK) {
+//            switch (requestCode) {
+//                case EVENT_EDIT:
+//                    EventModel _eventModel = (EventModel) data.getSerializableExtra("event_model");
+//                    calendar.set(_eventModel.getDate().getYear()+1900,
+//                            _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
+//                    EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
+//
+//                    DayDateModel dayDateModel = new DayDateModel();
+//                    dayDateModel.setYear(_eventModel.getDate().getYear()+1900+"");
+//                    dayDateModel.setMonth(_eventModel.getDate().getMonth()+1+"");
+//                    dayDateModel.setDay(_eventModel.getDate().getDate()+"");
+//                    initData(dayDateModel);
+//
+//                    int hour1 = _eventModel.getRemind().getHours();
+//                    int minute1 = _eventModel.getRemind().getMinutes();
+//                    int marginTop = view_event_container.offset/2 + view_event_container.mTotalHeight * (hour1*60+minute1) / EventContainerView.MINITES_OF_DAY;
+//                    scrollTo(marginTop);
+////                    setEventDialog(_eventModel);
+//                    break;
+//            }
+//        }
+//    }
 
     private void getEventOfDate(DayDateModel dayDateModel) {
         Calendar _calendar = Calendar.getInstance();
@@ -322,8 +357,12 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 //        viewHolder.iv_right2.setVisibility(View.VISIBLE);
     }
 
-    public static void startSelf(Context context){
+
+
+    public static void startSelf(Context context, DayDateModel dayDateModel, EventModel eventModel){
         Intent intent = new Intent(context, EventDayActivity.class);
+        intent.putExtra("dayDateModel", dayDateModel);
+        intent.putExtra("eventModel", eventModel);
         context.startActivity(intent);
     }
 

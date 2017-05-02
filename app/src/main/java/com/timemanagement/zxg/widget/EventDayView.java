@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.LogUtils;
+import com.timemanagement.zxg.utils.Tools;
 
 import java.util.Calendar;
 
@@ -156,6 +157,14 @@ public class EventDayView extends LinearLayout implements View.OnClickListener{
         mDayDateModels = dayDateModels;
         for (int i = 0; i < 7; i++) {
             tv_days[i].setText(mDayDateModels[i].getDay());
+            String _str = mDayDateModels[i].getLunar();
+            if (!Tools.isEmpty(_str) && _str.lastIndexOf("月")>=0) {
+                if (_str.contains("初一") && _str.lastIndexOf("年")>=0) {
+                    tv_lunars[i].setText(_str.substring(_str.lastIndexOf("年")+1, _str.lastIndexOf("月")+1));
+                } else {
+                    tv_lunars[i].setText(_str.substring(_str.lastIndexOf("月")+1));
+                }
+            }
         }
         setItemStyle();
     }
@@ -172,6 +181,7 @@ public class EventDayView extends LinearLayout implements View.OnClickListener{
             if (mDayDateModels[i].getWeek().equals(mWeekCheck+"")) {
                 //星期跟当前日期相同的日期，字体颜色设置为白色
                 tv_days[i].setTextColor(Color.WHITE);
+                tv_lunars[i].setTextColor(Color.WHITE);
                 //星期跟当前日期相同的日期，设置背景颜色
                 if (isCurrentDate(Integer.valueOf(mDayDateModels[i].getYear()),
                         Integer.valueOf(mDayDateModels[i].getMonth()), Integer.valueOf(mDayDateModels[i].getDay()))){

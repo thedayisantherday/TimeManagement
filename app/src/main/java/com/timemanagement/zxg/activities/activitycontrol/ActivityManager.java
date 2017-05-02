@@ -86,6 +86,18 @@ public class ActivityManager {
     }
 
     /**
+     * 只保存底部activity
+     */
+    public synchronized void onlyOneActivity() {
+        for (int i = list_activities.size() - 1; i >= 1; i--) {
+            Activity _activity = list_activities.get(i);
+            removeActivity(_activity);
+            _activity.finish();
+        }
+        LogUtils.i(TAG, "only one activities is activity");
+    }
+
+    /**
      * 清除所有activity
      */
     public synchronized void finishAllActivity() {

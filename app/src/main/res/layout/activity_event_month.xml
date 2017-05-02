@@ -77,7 +77,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:layout_alignTop="@+id/layout_bottom">
+        android:layout_alignTop="@+id/layout_bottom"
+        android:background="@color/color_efeff4">
         <ListView
             android:id="@+id/lv_month"
             android:layout_width="match_parent"

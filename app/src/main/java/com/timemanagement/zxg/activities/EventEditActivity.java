@@ -11,6 +11,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.database.DatabaseUtil;
 import com.timemanagement.zxg.model.EventModel;
@@ -189,6 +190,7 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        Tools.closeKeyboard(view, mContext);
         switch (view.getId()){
             case R.id.rl_date:
                 openWheelDateSelector(TYPE_DATE);
@@ -321,7 +323,8 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                     EventDayActivity.view_event_container.removeView(
                             EventDayActivity.mEventDialog.view_event_dialog);
                 }
-                this.finish();
+//                this.finish();
+                ActivityManager.getInstance().finishActivity(mthis);
                 break;
             case R.id.tv_right:
                 if (checkData()) {
@@ -336,10 +339,12 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                         mDatabaseUtil.updateData(mEventModel);
                     }
 
-                    Intent intent = new Intent(mContext, EventDayActivity.class);
-                    intent.putExtra("event_model", mEventModel);
-                    ((EventEditActivity)mContext).setResult(RESULT_OK, intent);
-                    this.finish();
+                    EventDayActivity.startSelf(mContext, null, mEventModel);
+//                    Intent intent = new Intent(mContext, EventDayActivity.class);
+//                    intent.putExtra("event_model", mEventModel);
+//                    ((EventEditActivity)mContext).setResult(RESULT_OK, intent);
+//                    this.finish();
+                    ActivityManager.getInstance().finishActivity(mthis);
                 }
                 break;
         }

@@ -1,7 +1,6 @@
 package com.timemanagement.zxg.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,10 @@ import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.DimensionUtils;
+import com.timemanagement.zxg.utils.Tools;
 
 import java.util.Calendar;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by zxg on 17/2/12.
@@ -202,7 +200,14 @@ public class EventMonthAdapter extends BaseAdapter {
         for (int i = offset; i < dayDateModels.size()+offset; i++) {
             final DayDateModel _dayDateModel = dayDateModels.get(i-offset);
             viewHolder.tvDays[i].setText(_dayDateModel.getDay());
-            viewHolder.tvLunars[i].setText(_dayDateModel.getLunar());
+            String _str = _dayDateModel.getLunar();
+            if (!Tools.isEmpty(_str) && _str.lastIndexOf("月")>=0) {
+                if (_str.contains("初一") && _str.lastIndexOf("年")>=0) {
+                    viewHolder.tvLunars[i].setText(_str.substring(_str.lastIndexOf("年")+1, _str.lastIndexOf("月")+1));
+                } else {
+                    viewHolder.tvLunars[i].setText(_str.substring(_str.lastIndexOf("月")+1));
+                }
+            }
             if (_dayDateModel.getYear().equals(mCalendar.get(Calendar.YEAR)+"")
                     && _dayDateModel.getMonth().equals(mCalendar.get(Calendar.MONTH)+1+"")
                     && _dayDateModel.getDay().equals(mCalendar.get(Calendar.DAY_OF_MONTH)+"")){
@@ -213,9 +218,7 @@ public class EventMonthAdapter extends BaseAdapter {
             viewHolder.llDays[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, EventDayActivity.class);
-                    intent.putExtra("dayDateModel", _dayDateModel);
-                    ((EventMonthActivity)mContext).setResult(RESULT_OK, intent);
+                    EventDayActivity.startSelf(mContext, _dayDateModel, null);
                     ((EventMonthActivity)mContext).finish();
                 }
             });

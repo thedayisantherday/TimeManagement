@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,6 +41,17 @@ public class Tools {
         lastClickTime = currentTime;
         return false;
     }
+
+    /**
+     * 隐藏键盘
+     * @param view
+     * @param context
+     */
+    public static void closeKeyboard(View view, Context context) {
+        InputMethodManager inputmanger = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     /**
      * 判断字符串是否为空
      * @param text
