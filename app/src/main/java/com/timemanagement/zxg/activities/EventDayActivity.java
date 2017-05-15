@@ -11,6 +11,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
+import com.timemanagement.zxg.activities.activitycontrol.MyApplication;
 import com.timemanagement.zxg.adapter.ViewPagerAdapter;
 import com.timemanagement.zxg.database.DatabaseUtil;
 import com.timemanagement.zxg.model.DayDateModel;
@@ -246,12 +247,15 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 //                EventListActivity.startSelf(mContext);
 //                break;
             case R.id.tv_date_detail:
-                test(2017, 5, 20);
-//                new LunarUtils().getLunar(1991, 3, 30);
-                Calendar _calendar = Calendar.getInstance();
-                LogUtils.i("tv_date_detail", ", year:"+_calendar.get(Calendar.YEAR)+
-                        ", month:"+_calendar.get(Calendar.MONTH)+", day:"+_calendar.get(Calendar.DATE)
-                        + ", hour:"+_calendar.get(Calendar.HOUR)+ ", minute:"+_calendar.get(Calendar.MINUTE));
+                MyApplication.getInstance().getRemindService().resetRemindNotification();
+//                Intent startIntent = new Intent(this, RemindService.class);
+//                startService(startIntent); // 启动服务
+//                test(2017, 5, 20);
+////                new LunarUtils().getLunar(1991, 3, 30);
+//                Calendar _calendar = Calendar.getInstance();
+//                LogUtils.i("tv_date_detail", ", year:"+_calendar.get(Calendar.YEAR)+
+//                        ", month:"+_calendar.get(Calendar.MONTH)+", day:"+_calendar.get(Calendar.DATE)
+//                        + ", hour:"+_calendar.get(Calendar.HOUR)+ ", minute:"+_calendar.get(Calendar.MINUTE));
                 break;
         }
     }

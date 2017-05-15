@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name="com.timemanagement.zxg.activities.activitycontrol.MyApplication"
@@ -26,18 +28,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.timemanagement.zxg.activities.EventEditActivity" />
+        <activity android:name="com.timemanagement.zxg.activities.EventEditActivity" />
         <activity android:name="com.timemanagement.zxg.activities.TestActivity" />
         <activity android:name="com.timemanagement.zxg.activities.MainActivity" />
-        <activity
-            android:name="com.timemanagement.zxg.activities.EventMonthActivity" />
-        <activity
-            android:name="com.timemanagement.zxg.activities.EventYearActivity" />
-        <activity
-            android:name="com.timemanagement.zxg.activities.EventRepeatActivity" />
-        <activity
-            android:name="com.timemanagement.zxg.activities.EventListActivity"/>
+        <activity android:name="com.timemanagement.zxg.activities.EventMonthActivity" />
+        <activity android:name="com.timemanagement.zxg.activities.EventYearActivity" />
+        <activity android:name="com.timemanagement.zxg.activities.EventRepeatActivity" />
+        <activity android:name="com.timemanagement.zxg.activities.EventListActivity" />
+
+        <!--&lt;!&ndash; android:process="system" 不能保存实例到应用程序 &ndash;&gt;
+        <service
+            android:name="com.timemanagement.zxg.service.RemindService"
+            android:enabled="true"
+            android:exported="true"
+            android:process="system">
+        </service>-->
+        <service
+            android:name="com.timemanagement.zxg.service.RemindService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+        <receiver android:name="com.timemanagement.zxg.receiver.NotificationReceiver"/>
+        <receiver android:name="com.timemanagement.zxg.receiver.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -16,12 +16,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.timemanagement.zxg.utils.TimeUtils.strToDateShort;
+
 /**
  * Created by zxg on 17/3/15.
  */
 
 
 public class DatabaseUtil {
+    private static String TAG = DatabaseUtil.class.getSimpleName();
     private DatabaseHelper helper;
 
     public DatabaseUtil(Context context) {
@@ -84,7 +87,8 @@ public class DatabaseUtil {
             while(cursor.moveToNext()){
                 LogUtils.i("cursor size", "cursor size is " + cursor.getCount()
                         + " id is "+cursor.getInt(cursor.getColumnIndex("id")));
-                eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                eventModel = cursor2EventModel(cursor);
+                /*eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 eventModel.setDate(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
                 eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
@@ -94,7 +98,7 @@ public class DatabaseUtil {
                 eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
                 eventModel.setRepeatEnd(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
                 eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
-                eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);
+                eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);*/
             }
         } catch (SQLException e){
             Log.e("err", "insert failed");
@@ -161,21 +165,39 @@ public class DatabaseUtil {
         Cursor cursor = db.query(helper.TABLE_NAME, null, null,null, null, null, null);
 
         while(cursor.moveToNext()){
-            EventModel eventModel = new EventModel();
-            eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-            eventModel.setDate(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
-            eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
-            eventModel.setRemindAgain(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remindAgain"))));
-            eventModel.setEmergency(cursor.getInt(cursor.getColumnIndex("emergency")));
-            eventModel.setImportance(cursor.getInt(cursor.getColumnIndex("importance")));
-            eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
-            eventModel.setRepeatEnd(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
-            eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
-            eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);
-            list.add(eventModel);
+            list.add(cursor2EventModel(cursor));
         }
         db.close();
+        return list;
+    }
+
+    /**
+     * 查询startDate到endDate时间内的数据
+     * @return
+     **/
+    public List<EventModel> queryByInterval(Date startDate, Date endDate){
+        List<EventModel> list = new ArrayList<EventModel>();
+
+        list.addAll(queryByDate(startDate));
+        // startDate和endDate不在同一天时
+        // 只考虑了startDate和endDate相差一天的情况，相差多天时需要改造
+        if (!TimeUtils.dateToStrShort(startDate).equals(TimeUtils.dateToStrShort(endDate))) {
+            list.addAll(queryByDate(endDate));
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            EventModel _eventModel = list.get(i);
+            if (_eventModel.getRepeat() == 0) {
+                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), false)) {
+                    list.remove(i);
+                }
+            } else {
+                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), true)) {
+                    list.remove(i);
+                }
+            }
+        }
+
         return list;
     }
 
@@ -189,26 +211,48 @@ public class DatabaseUtil {
         Cursor cursor = db.query(helper.TABLE_NAME, null, "date=?",new String[]{TimeUtils.dateToStrShort(date)}, null, null, null);
 
         while(cursor.moveToNext()){
-            EventModel eventModel = new EventModel();
-            eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-            eventModel.setDate(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
-            eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
-            eventModel.setRemindAgain(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remindAgain"))));
-            eventModel.setEmergency(cursor.getInt(cursor.getColumnIndex("emergency")));
-            eventModel.setImportance(cursor.getInt(cursor.getColumnIndex("importance")));
-            eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
-            eventModel.setRepeatEnd(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
-            eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
-            eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);
-            list.add(eventModel);
+            list.add(cursor2EventModel(cursor));
         }
+
+        // 查询符合条件的重复事件
+        cursor = db.query(helper.TABLE_NAME, null, "repeat!=?",new String[]{"0"}, null, null, "repeat");
+        while(cursor.moveToNext()){
+            Date _date = TimeUtils.strToDateShort(TimeUtils.dateToStrShort(date));
+            Date remindDate = TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date")));
+            Date repeatEndDate = strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd")));
+            switch (cursor.getInt(cursor.getColumnIndex("repeat"))) {
+                case 1:
+                    if (isCorrespond(_date, remindDate, repeatEndDate)) {
+                        list.add(cursor2EventModel(cursor));
+                    }
+                    break;
+                case 2:
+                    // 工作日，待完善
+                    break;
+                case 3:
+                    if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getTime()-remindDate.getTime())/(24*60*60*1000)%7 == 0) {
+                        list.add(cursor2EventModel(cursor));
+                    }
+                    break;
+                case 4:
+                    if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getDate() == remindDate.getDate())) {
+                        list.add(cursor2EventModel(cursor));
+                    }
+                    break;
+                case 5:
+                    if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getMonth() == remindDate.getMonth()) && (_date.getDate() == remindDate.getDate())) {
+                        list.add(cursor2EventModel(cursor));
+                    }
+                    break;
+            }
+        }
+
         db.close();
         return list;
     }
 
     /**
-     * 按重复类型查询
+     * 按重复类型查询，可以一次性将所有重复类型的数据查询出来，然后根据重复类型分类
      * @return
      */
     public Map<String, List<EventModel>> queryByRepeatType(){
@@ -219,23 +263,60 @@ public class DatabaseUtil {
             List<EventModel> list = new ArrayList<EventModel>();
             Cursor cursor = db.query(helper.TABLE_NAME, null, "repeat=?",new String[]{""+i}, null, null, "remind");
             while(cursor.moveToNext()){
-                EventModel eventModel = new EventModel();
-                eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                eventModel.setDate(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
-                eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
-                eventModel.setRemindAgain(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remindAgain"))));
-                eventModel.setEmergency(cursor.getInt(cursor.getColumnIndex("emergency")));
-                eventModel.setImportance(cursor.getInt(cursor.getColumnIndex("importance")));
-                eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
-                eventModel.setRepeatEnd(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
-                eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
-                eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);
-                list.add(eventModel);
+                list.add(cursor2EventModel(cursor));
             }
             maps.put(""+i, list);
         }
         db.close();
         return maps;
+    }
+
+    private EventModel cursor2EventModel (Cursor cursor) {
+        EventModel eventModel = new EventModel();
+        eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
+        eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+        eventModel.setDate(strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
+        eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
+        eventModel.setRemindAgain(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remindAgain"))));
+        eventModel.setEmergency(cursor.getInt(cursor.getColumnIndex("emergency")));
+        eventModel.setImportance(cursor.getInt(cursor.getColumnIndex("importance")));
+        eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
+        eventModel.setRepeatEnd(strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
+        eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
+        eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);
+        return eventModel;
+    }
+
+    private boolean isCorrespond(Date date, Date remindDate, Date repeatEndDate) {
+        if ((remindDate.before(date) || remindDate.equals(date))
+                && (repeatEndDate == null || (repeatEndDate != null && (repeatEndDate.after(date) || repeatEndDate.equals(date))))){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断某个日期是否在某个区间内
+     * @param startDate
+     * @param endDate
+     * @param date
+     * @param isRepeat
+     * @return
+     */
+    private boolean isCorrespondInterval(Date startDate, Date endDate, Date date, boolean isRepeat){
+
+        if (!date.after(endDate)) {
+            long offset = 0;
+
+            if (isRepeat) {
+                offset = TimeUtils.strToDateShort(TimeUtils.dateToStrShort(startDate)).getTime()
+                        - TimeUtils.strToDateShort(TimeUtils.dateToStrShort(date)).getTime();
+            }
+
+            if ((date.getTime()+offset) >= startDate.getTime() && (date.getTime()+offset) <= endDate.getTime()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
+import com.timemanagement.zxg.activities.activitycontrol.MyApplication;
 import com.timemanagement.zxg.database.DatabaseUtil;
 import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
@@ -257,6 +258,9 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                             mDatabaseUtil = new DatabaseUtil(mContext);
                         }
                         mDatabaseUtil.deleteData(mEventModel.getId());
+
+                        resetRemindNotification();
+
                         self.finish();
                     }
                 });
@@ -339,6 +343,8 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                         mDatabaseUtil.updateData(mEventModel);
                     }
 
+                    resetRemindNotification();
+
                     EventDayActivity.startSelf(mContext, null, mEventModel);
 //                    Intent intent = new Intent(mContext, EventDayActivity.class);
 //                    intent.putExtra("event_model", mEventModel);
@@ -347,6 +353,13 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                     ActivityManager.getInstance().finishActivity(mthis);
                 }
                 break;
+        }
+    }
+
+    // 重置定时提醒任务
+    private void resetRemindNotification() {
+        if (MyApplication.getInstance().getRemindService() != null) {
+            MyApplication.getInstance().getRemindService().resetRemindNotification();
         }
     }
 
