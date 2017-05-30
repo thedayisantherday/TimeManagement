@@ -10,6 +10,7 @@ import com.timemanagement.zxg.activities.EventDayActivity;
 import com.timemanagement.zxg.activities.EventEditActivity;
 import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
+import com.timemanagement.zxg.utils.DimensionUtils;
 import com.timemanagement.zxg.utils.LogUtils;
 import com.timemanagement.zxg.utils.Tools;
 
@@ -52,16 +53,21 @@ public class EventDialog {
 
     public void setView(ViewGroup viewGroup, int left, int top) {
         layoutParams.setMargins(left, top, 0, 0);
+        layoutParams.width = DimensionUtils.getWidthPixels() - left;
         layoutParams.height = 100;
         view_event_dialog.setLayoutParams(layoutParams);
         viewGroup.addView(view_event_dialog);
     }
 
-    public void updateView(ViewGroup viewGroup, int left, int top, int height, String title) {
+    public void updateView(ViewGroup viewGroup, int left, int top, int width, int height, String title) {
         layoutParams.setMargins(left, top, 0, 0);
         if (height < 60){ //为了保证事件title显示，EventDialog最小的高度为60px
             height = 60;
         }
+//        if (width > 0) {
+//            layoutParams.width = width;
+//        }
+        layoutParams.width = DimensionUtils.getWidthPixels() - left;
         layoutParams.height = height;
         view_event_dialog.setLayoutParams(layoutParams);
 //        viewGroup.addView(view_event_dialog);

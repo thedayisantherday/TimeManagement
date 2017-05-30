@@ -20,6 +20,8 @@
             android:paddingRight="@dimen/dp_10"
             android:gravity="center_vertical"
             android:textSize="@dimen/sp_16"
+            android:singleLine="true"
+            android:ellipsize="middle"
             android:hint="标题"
             android:textColorHint="@color/color_C7C7C7"
             android:background="@color/white"/>

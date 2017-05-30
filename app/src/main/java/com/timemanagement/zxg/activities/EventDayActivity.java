@@ -7,11 +7,11 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
-import com.timemanagement.zxg.activities.activitycontrol.MyApplication;
 import com.timemanagement.zxg.adapter.ViewPagerAdapter;
 import com.timemanagement.zxg.database.DatabaseUtil;
 import com.timemanagement.zxg.model.DayDateModel;
@@ -34,6 +34,7 @@ import static com.timemanagement.zxg.utils.LunarUtils.chineseDateFormat;
 
 public class EventDayActivity extends BaseActivity implements View.OnClickListener{
 
+    public static String TAG = EventDayActivity.class.getSimpleName();
     public static Context mContext;
     private ViewPager vp_date;
     private TextView tv_date_detail, tv_today, tv_repeat/*, tv_out_date*/;
@@ -66,6 +67,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         mContext = this;
 
         initView();
+        initData(mDayDateModel);
     }
 
     /**
@@ -82,10 +84,10 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
     protected void onStart() {
         super.onStart();
 
-        DayDateModel _dayDateModel = (DayDateModel) getIntent().getSerializableExtra("dayDateModel");
-        if (_dayDateModel != null) {
-            calendar.set(Integer.valueOf(_dayDateModel.getYear()),
-                    Integer.valueOf(_dayDateModel.getMonth()) - 1, Integer.valueOf(_dayDateModel.getDay()));
+        mDayDateModel = (DayDateModel) getIntent().getSerializableExtra("dayDateModel");
+        if (mDayDateModel != null) {
+            calendar.set(Integer.valueOf(mDayDateModel.getYear()),
+                    Integer.valueOf(mDayDateModel.getMonth()) - 1, Integer.valueOf(mDayDateModel.getDay()));
             EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
         }
 
@@ -95,10 +97,12 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                     _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
             EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
 
-            _dayDateModel = new DayDateModel();
-            _dayDateModel.setYear(_eventModel.getDate().getYear() + 1900 + "");
-            _dayDateModel.setMonth(_eventModel.getDate().getMonth() + 1 + "");
-            _dayDateModel.setDay(_eventModel.getDate().getDate() + "");
+            if (mDayDateModel == null) {
+                mDayDateModel = new DayDateModel();
+            }
+            mDayDateModel.setYear(_eventModel.getDate().getYear() + 1900 + "");
+            mDayDateModel.setMonth(_eventModel.getDate().getMonth() + 1 + "");
+            mDayDateModel.setDay(_eventModel.getDate().getDate() + "");
 
             int hour1 = _eventModel.getRemind().getHours();
             int minute1 = _eventModel.getRemind().getMinutes();
@@ -106,7 +110,11 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
             scrollTo(marginTop);
         }
 
-        initData(_dayDateModel);
+        LogUtils.i(TAG, mDayDateModel+"");
+        LogUtils.i(TAG, _eventModel+"");
+        if (mDayDateModel != null) {
+            initData(mDayDateModel);
+        }
         if (_eventModel == null) {
             gotoCurrent();
         }
@@ -115,7 +123,6 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
     private void initView(){
         vp_date = (ViewPager) findViewById(R.id.vp_date);
         tv_date_detail = (TextView) findViewById(R.id.tv_date_detail);
-        tv_date_detail.setOnClickListener(this);
         tv_today = (TextView)findViewById(R.id.tv_today);
         tv_today.setOnClickListener(this);
         tv_repeat = (TextView)findViewById(R.id.tv_repeat);
@@ -134,6 +141,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 @Override
                 public void onViewpagerItemClick(DayDateModel dayDateModel) {
                     mDayDateModel = dayDateModel;
+                    setDateDetail(mDayDateModel);
                     getEventOfDate(mDayDateModel);
                     mViewHolder.tv_left.setText(dayDateModel.getYear()+"年"+dayDateModel.getMonth()+"月");
                     for (int j = 0; j < vp_views.size(); j++) {
@@ -191,6 +199,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         vp_date.setCurrentItem(2);
         vp_date.addOnPageChangeListener(new EventDayOnPageChangeListener());
 
+        setDateDetail(mDayDateModel);
         getEventOfDate(dayDateModel);
     }
 
@@ -239,15 +248,14 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
             case R.id.iv_right2:
                 break;
             case R.id.tv_today:
+                gotoToday();
                 break;
             case R.id.tv_repeat:
                 EventRepeatActivity.startSelf(mContext);
                 break;
 //            case tv_out_date:
 //                EventListActivity.startSelf(mContext);
-//                break;
-            case R.id.tv_date_detail:
-                MyApplication.getInstance().getRemindService().resetRemindNotification();
+//                MyApplication.getInstance().getRemindService().resetRemindNotification();
 //                Intent startIntent = new Intent(this, RemindService.class);
 //                startService(startIntent); // 启动服务
 //                test(2017, 5, 20);
@@ -256,7 +264,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 //                LogUtils.i("tv_date_detail", ", year:"+_calendar.get(Calendar.YEAR)+
 //                        ", month:"+_calendar.get(Calendar.MONTH)+", day:"+_calendar.get(Calendar.DATE)
 //                        + ", hour:"+_calendar.get(Calendar.HOUR)+ ", minute:"+_calendar.get(Calendar.MINUTE));
-                break;
+//                break;
         }
     }
 
@@ -268,13 +276,13 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 + "　农历" + lunar);
     }
 
-    /**
-     * 调用带参数返回startActivityForResult时，
-     * 两个activity的启动模式都不能是launchMode="singleInstance"
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
+//    /**
+//     * 调用带参数返回startActivityForResult时，
+//     * 两个activity的启动模式都不能是launchMode="singleInstance"
+//     * @param requestCode
+//     * @param resultCode
+//     * @param data
+//     */
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        super.onActivityResult(requestCode, resultCode, data);
@@ -317,7 +325,26 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         if (eventModels != null && eventModels.size() > 0) {
             for (int i=0; i < eventModels.size(); i++) {
                 mEventDialog = new EventDialog(mContext);
-                setEventDialog(eventModels.get(i));
+                if (i>0) {
+                    int repeat1 = eventModels.get(i-1).getRemind().getHours()*60 + eventModels.get(i-1).getRemind().getMinutes();
+                    int repeatAgain = 60+repeat1;
+                    if (eventModels.get(i-1).getRemindAgain() != null) {
+                        repeatAgain = eventModels.get(i-1).getRemindAgain().getHours()*60 + eventModels.get(i-1).getRemindAgain().getMinutes();
+                    }
+                    int repeat2 = eventModels.get(i).getRemind().getHours()*60 + eventModels.get(i).getRemind().getMinutes();
+                    if (repeat2 - repeat1 >= 15 && repeatAgain - repeat1 >= 0 && repeatAgain - repeat2 >= 0) {
+                        int leftMargin = ((RelativeLayout.LayoutParams)view_event_container.getChildAt(2+i-1).getLayoutParams()).leftMargin;
+                        setEventDialog(eventModels.get(i), leftMargin+10, 0);
+                    } else if (repeat2 - repeat1 < 15 && repeat2 - repeat1 >= 0) {
+                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view_event_container.getChildAt(2+i-1).getLayoutParams();
+                        setEventDialog(eventModels.get(i), params.leftMargin+params.width/2, params.width/2);
+                        params.width = params.width/2;
+                    } else {
+                        setEventDialog(eventModels.get(i), 0, 0);
+                    }
+                } else {
+                    setEventDialog(eventModels.get(i), 0, 0);
+                }
                 view_event_container.addView(mEventDialog.view_event_dialog);
             }
         }
@@ -328,9 +355,12 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
      * 设置EventDialog的布局
      * @param eventModel
      */
-    private void setEventDialog(EventModel eventModel) {
+    private void setEventDialog(EventModel eventModel, int left, int width) {
         if (eventModel == null){
             return;
+        }
+        if (left < 150) {
+            left = 150;
         }
         mEventDialog.mEventModel = eventModel;
         int hour1 = mEventDialog.mEventModel.getRemind().getHours();
@@ -343,10 +373,37 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
             int minute2 = mEventDialog.mEventModel.getRemindAgain().getMinutes();
             int minutes = (hour2 - hour1) * 60 + minute2 - minute1;
             int _height = view_event_container.mTotalHeight * minutes / EventContainerView.MINITES_OF_DAY;
-            mEventDialog.updateView(view_event_container, 150, marginTop, _height, mEventDialog.mEventModel.getTitle());
+            mEventDialog.updateView(view_event_container, left, marginTop, width, _height, mEventDialog.mEventModel.getTitle());
         } else {
-            mEventDialog.updateView(view_event_container, 150, marginTop, 0, mEventDialog.mEventModel.getTitle());
+            mEventDialog.updateView(view_event_container, left, marginTop, width, 0, mEventDialog.mEventModel.getTitle());
         }
+    }
+
+    private void setDateDetail(DayDateModel dayDateModel) {
+        String str_date_detail;
+        if (dayDateModel == null) {
+            str_date_detail = calendar.get(Calendar.YEAR)+"年"+(calendar.get(Calendar.MONTH)+1)+"月"
+                    +calendar.get(Calendar.DAY_OF_MONTH)+"日 " + TimeUtils.getWeek(calendar.get(Calendar.DAY_OF_WEEK)+"");
+            str_date_detail += " " + new LunarUtils(calendar).toString();
+        } else {
+            str_date_detail = dayDateModel.getYear()+"年"+dayDateModel.getMonth()+"月"+dayDateModel.getDay()+"日 "
+                    + TimeUtils.getWeek(dayDateModel.getWeek()) + " " + dayDateModel.getLunar();
+
+        }
+
+        tv_date_detail.setText(str_date_detail);
+    }
+
+    private void gotoToday () {
+        calendar = Calendar.getInstance();
+        EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
+        mDayDateModels.clear();
+        for (int i = 0; i < 4; i++) {
+            mDayDateModels.add(DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (i - 1) * 7)));
+        }
+        mViewPagerAdapter.notifyDataSetChanged();
+        vp_date.setCurrentItem(2);
+        mPosition = 2;
     }
 
     @Override
@@ -386,6 +443,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                         offsetWeek--;
                         mDayDateModels.set(2, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek-1)*7)));
                         mDayDateModel = mDayDateModels.get(3)[EventDayView.mWeekCheck-1];
+                        setDateDetail(mDayDateModel);
                         mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");
                         getEventOfDate(mDayDateModel);
                     }
@@ -395,15 +453,18 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                         offsetWeek--;
                         mDayDateModels.set(3, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek-1)*7)));
                         mDayDateModel = mDayDateModels.get(0)[EventDayView.mWeekCheck-1];
+                        setDateDetail(mDayDateModel);
                         mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");
                         getEventOfDate(mDayDateModel);
                     }
                     break;
                 case 2:
                 case 3:
+                    LogUtils.i("onPageSelected23", "offsetWeek:"+offsetWeek+",position:"+position+",mPosition:"+mPosition);
                     offsetWeek = offsetWeek + position - mPosition;
                     mDayDateModels.set(position-1+position-mPosition, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek+position-mPosition)*7)));
                     mDayDateModel = mDayDateModels.get(position-1)[EventDayView.mWeekCheck-1];
+                    setDateDetail(mDayDateModel);
                     mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");
                     getEventOfDate(mDayDateModel);
                     break;
@@ -412,6 +473,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                         offsetWeek++;
                         mDayDateModels.set(0, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek+1)*7)));
                         mDayDateModel = mDayDateModels.get(position-1)[EventDayView.mWeekCheck-1];
+                        setDateDetail(mDayDateModel);
                         mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");
                         getEventOfDate(mDayDateModel);
                     }
@@ -421,6 +483,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                         offsetWeek++;
                         mDayDateModels.set(1, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek+1)*7)));
                         mDayDateModel = mDayDateModels.get(0)[EventDayView.mWeekCheck-1];
+                        setDateDetail(mDayDateModel);
                         mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");
                         getEventOfDate(mDayDateModel);
                     }

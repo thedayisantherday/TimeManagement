@@ -84,37 +84,48 @@ public class RemindService extends Service {
 
         if (eventModels != null) {
             for (int i = 0; i < eventModels.size(); i++) {
-                // 开启定时通知
-                sendRemindNotification(eventModels.get(i));
+                // 根据remind设置定时提醒
+                long triggerAtMillis1 = eventModels.get(i).getRemind().getTime();
+                if (eventModels.get(i).getRepeat() != 0) {
+                    triggerAtMillis1 += TimeUtils.getNowDateShort().getTime()
+                            - TimeUtils.dateToShort(eventModels.get(i).getRemind()).getTime();
+                }
+                if (triggerAtMillis1 >= _calendar.getTime().getTime()) {
+                    // 开启定时通知
+                    sendRemindNotification(eventModels.get(i), triggerAtMillis1, false);
+                }
+
+                // 根据remindAgain设置定时提醒
+                if (eventModels.get(i).getRemindAgain() != null) {
+                    long triggerAtMillis2 = eventModels.get(i).getRemindAgain().getTime();
+                    if (eventModels.get(i).getRepeat() != 0) {
+                        triggerAtMillis2 += TimeUtils.getNowDateShort().getTime()
+                                - TimeUtils.dateToShort(eventModels.get(i).getRemindAgain()).getTime();
+                    }
+                    if (triggerAtMillis2 >= _calendar.getTime().getTime()) {
+                        // 开启定时通知
+                        sendRemindNotification(eventModels.get(i), triggerAtMillis2, true);
+                    }
+                }
             }
         }
     }
 
     // 发送提醒通知
-    public void sendRemindNotification(EventModel eventModel) {
+    public void sendRemindNotification(EventModel eventModel, long triggerAtMillis, boolean isRemindAgain) {
         LogUtils.i("RemindService1111111", eventModel.getTitle());
         Intent intent = new Intent(mContext, NotificationReceiver.class);
         intent.putExtra("remind_eventModel", eventModel);
 
         PendingIntent sender = PendingIntent.getBroadcast(mContext,
-                eventModel.getId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                (isRemindAgain? -1:1)*eventModel.getId(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
         senders.add(sender);
-
-        long triggerAtMillis = eventModel.getRemind().getTime();
-        if (eventModel.getRepeat() != 0) {
-            triggerAtMillis = eventModel.getRemind().getTime()
-                    + (TimeUtils.getNowDateShort().getTime() - TimeUtils.strToDateShort(TimeUtils.dateToStrShort(eventModel.getRemind())).getTime());
-        }
 
         if (mAlarmManager == null) {
             mAlarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         }
         mAlarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, sender);
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(eventModel.getRemind());
-//
-//        mAlarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-//        am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), INTERVAL, sender);
+//        am.setRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis, INTERVAL, sender);
     }
 
     /**

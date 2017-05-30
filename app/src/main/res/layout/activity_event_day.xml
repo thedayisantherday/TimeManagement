@@ -98,10 +98,9 @@
     <TextView
         android:id="@+id/tv_date_detail"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="30dp"
         android:gravity="center"
-        android:textSize="@dimen/sp_14"
-        android:text="134354657689"/>
+        android:textSize="@dimen/sp_14"/>
 
     <View
         android:layout_width="match_parent"

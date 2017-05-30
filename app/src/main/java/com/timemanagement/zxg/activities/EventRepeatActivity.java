@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.adapter.GroupRepeatAdapter;
 import com.timemanagement.zxg.database.DatabaseUtil;
@@ -14,7 +15,6 @@ import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.UIUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,7 +85,8 @@ public class EventRepeatActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_left:
-                this.finish();
+                EventDayActivity.startSelf(mContext, null, null);
+                ActivityManager.getInstance().finishActivity(mthis);
                 break;
         }
     }

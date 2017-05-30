@@ -33,6 +33,27 @@ public class TimeUtils{
         }
     }
 
+    public static String getWeek(String week) {
+        switch (week){
+            case "1":
+                return "周日";
+            case "2":
+                return "周一";
+            case "3":
+                return "周二";
+            case "4":
+                return "周三";
+            case "5":
+                return "周四";
+            case "6":
+                return "周五";
+            case "7":
+                return "周六";
+            default:
+                return "";
+        }
+    }
+
     /**
      * 获得指定日期的前若干天
      * @param calendar
@@ -78,6 +99,19 @@ public class TimeUtils{
 
         String dayBefore=new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());
         return dayBefore;
+    }
+
+    /**
+     * 去除时分秒
+     *
+     * @return 返回时间类型 yyyy-MM-dd 00:00:00
+     */
+    public static Date dateToShort(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = formatter.format(date);
+        ParsePosition pos = new ParsePosition(0);
+        Date currentTime_2 = formatter.parse(dateString, pos);
+        return currentTime_2;
     }
 
     /**

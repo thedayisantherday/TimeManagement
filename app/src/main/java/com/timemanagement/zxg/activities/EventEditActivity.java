@@ -328,6 +328,7 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                             EventDayActivity.mEventDialog.view_event_dialog);
                 }
 //                this.finish();
+                EventDayActivity.startSelf(mContext, null, null);
                 ActivityManager.getInstance().finishActivity(mthis);
                 break;
             case R.id.tv_right:
@@ -478,7 +479,10 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
      * @param eventModel
      */
     public static void startSelf(Context context, int type, EventModel eventModel){
+        LogUtils.i("EventEditActivity startSelf", context.toString());
         Intent intent = new Intent(context, EventEditActivity.class);
+        // 解决点击事件EventViewDialog，跳转EventEditActivity报错的问题，但是也会有问题
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("type", type);
         intent.putExtra("eventModel", eventModel);
         context.startActivity(intent);

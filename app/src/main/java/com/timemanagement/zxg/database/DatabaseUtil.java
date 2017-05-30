@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.timemanagement.zxg.model.EventModel;
+import com.timemanagement.zxg.utils.DateModelUtil;
 import com.timemanagement.zxg.utils.LogUtils;
 import com.timemanagement.zxg.utils.TimeUtils;
 
@@ -88,17 +89,6 @@ public class DatabaseUtil {
                 LogUtils.i("cursor size", "cursor size is " + cursor.getCount()
                         + " id is "+cursor.getInt(cursor.getColumnIndex("id")));
                 eventModel = cursor2EventModel(cursor);
-                /*eventModel.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                eventModel.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                eventModel.setDate(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date"))));
-                eventModel.setRemind(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remind"))));
-                eventModel.setRemindAgain(TimeUtils.strToDate(cursor.getString(cursor.getColumnIndex("remindAgain"))));
-                eventModel.setEmergency(cursor.getInt(cursor.getColumnIndex("emergency")));
-                eventModel.setImportance(cursor.getInt(cursor.getColumnIndex("importance")));
-                eventModel.setRepeat(cursor.getInt(cursor.getColumnIndex("repeat")));
-                eventModel.setRepeatEnd(TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd"))));
-                eventModel.setComment(cursor.getString(cursor.getColumnIndex("comment")));
-                eventModel.setIsFinished(cursor.getInt(cursor.getColumnIndex("isFinished"))>0);*/
             }
         } catch (SQLException e){
             Log.e("err", "insert failed");
@@ -176,6 +166,10 @@ public class DatabaseUtil {
      * @return
      **/
     public List<EventModel> queryByInterval(Date startDate, Date endDate){
+        if (startDate == null || endDate == null) {
+            return null;
+        }
+
         List<EventModel> list = new ArrayList<EventModel>();
 
         list.addAll(queryByDate(startDate));
@@ -188,11 +182,13 @@ public class DatabaseUtil {
         for (int i = 0; i < list.size(); i++) {
             EventModel _eventModel = list.get(i);
             if (_eventModel.getRepeat() == 0) {
-                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), false)) {
+                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), false)
+                        && !isCorrespondInterval(startDate, endDate, _eventModel.getRemindAgain(), false)) {
                     list.remove(i);
                 }
             } else {
-                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), true)) {
+                if (!isCorrespondInterval(startDate, endDate, _eventModel.getRemind(), true)
+                        && !isCorrespondInterval(startDate, endDate, _eventModel.getRemindAgain(), true)) {
                     list.remove(i);
                 }
             }
@@ -207,23 +203,27 @@ public class DatabaseUtil {
      */
     public List<EventModel> queryByDate(Date date){
         SQLiteDatabase db = helper.getReadableDatabase();
-        List<EventModel> list = new ArrayList<EventModel>();
-        Cursor cursor = db.query(helper.TABLE_NAME, null, "date=?",new String[]{TimeUtils.dateToStrShort(date)}, null, null, null);
+        List<EventModel> list1 = new ArrayList<EventModel>();
+        Cursor cursor = db.query(helper.TABLE_NAME, null, "date=?",new String[]{TimeUtils.dateToStrShort(date)}, null, null, "datetime(remind)");
 
         while(cursor.moveToNext()){
-            list.add(cursor2EventModel(cursor));
+            list1.add(cursor2EventModel(cursor));
         }
 
+        List<EventModel> list2 = new ArrayList<EventModel>();
         // 查询符合条件的重复事件
         cursor = db.query(helper.TABLE_NAME, null, "repeat!=?",new String[]{"0"}, null, null, "repeat");
         while(cursor.moveToNext()){
-            Date _date = TimeUtils.strToDateShort(TimeUtils.dateToStrShort(date));
+            Date _date = TimeUtils.dateToShort(date);
+            if (_date.equals(date)) {
+                continue;
+            }
             Date remindDate = TimeUtils.strToDateShort(cursor.getString(cursor.getColumnIndex("date")));
             Date repeatEndDate = strToDateShort(cursor.getString(cursor.getColumnIndex("repeatEnd")));
             switch (cursor.getInt(cursor.getColumnIndex("repeat"))) {
                 case 1:
                     if (isCorrespond(_date, remindDate, repeatEndDate)) {
-                        list.add(cursor2EventModel(cursor));
+                        list2.add(cursor2EventModel(cursor));
                     }
                     break;
                 case 2:
@@ -231,24 +231,24 @@ public class DatabaseUtil {
                     break;
                 case 3:
                     if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getTime()-remindDate.getTime())/(24*60*60*1000)%7 == 0) {
-                        list.add(cursor2EventModel(cursor));
+                        list2.add(cursor2EventModel(cursor));
                     }
                     break;
                 case 4:
                     if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getDate() == remindDate.getDate())) {
-                        list.add(cursor2EventModel(cursor));
+                        list2.add(cursor2EventModel(cursor));
                     }
                     break;
                 case 5:
                     if (isCorrespond(_date, remindDate, repeatEndDate) && (_date.getMonth() == remindDate.getMonth()) && (_date.getDate() == remindDate.getDate())) {
-                        list.add(cursor2EventModel(cursor));
+                        list2.add(cursor2EventModel(cursor));
                     }
                     break;
             }
         }
 
         db.close();
-        return list;
+        return DateModelUtil.sort(list1, list2);
     }
 
     /**
@@ -288,8 +288,8 @@ public class DatabaseUtil {
     }
 
     private boolean isCorrespond(Date date, Date remindDate, Date repeatEndDate) {
-        if ((remindDate.before(date) || remindDate.equals(date))
-                && (repeatEndDate == null || (repeatEndDate != null && (repeatEndDate.after(date) || repeatEndDate.equals(date))))){
+        if (!remindDate.after(date)
+                && (repeatEndDate == null || (repeatEndDate != null && !repeatEndDate.before(date)))){
             return true;
         }
         return false;
@@ -304,13 +304,15 @@ public class DatabaseUtil {
      * @return
      */
     private boolean isCorrespondInterval(Date startDate, Date endDate, Date date, boolean isRepeat){
+        if (startDate == null || endDate == null || date == null) {
+            return false;
+        }
 
         if (!date.after(endDate)) {
             long offset = 0;
 
             if (isRepeat) {
-                offset = TimeUtils.strToDateShort(TimeUtils.dateToStrShort(startDate)).getTime()
-                        - TimeUtils.strToDateShort(TimeUtils.dateToStrShort(date)).getTime();
+                offset = TimeUtils.dateToShort(startDate).getTime() - TimeUtils.dateToShort(date).getTime();
             }
 
             if ((date.getTime()+offset) >= startDate.getTime() && (date.getTime()+offset) <= endDate.getTime()) {

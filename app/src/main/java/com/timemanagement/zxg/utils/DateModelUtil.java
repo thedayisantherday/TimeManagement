@@ -1,6 +1,7 @@
 package com.timemanagement.zxg.utils;
 
 import com.timemanagement.zxg.model.DayDateModel;
+import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 
 import java.util.ArrayList;
@@ -13,6 +14,29 @@ import java.util.List;
  */
 
 public class DateModelUtil {
+
+    // 两个有序list合并成一个有序list
+    public static List<EventModel> sort(List<EventModel> list1 , List<EventModel> list2){
+        List<EventModel> list = new ArrayList<EventModel>();
+        int i = 0 , j = 0;
+        while(i < list1.size() && j < list2.size()){
+            Date remind1 = list1.get(i).getRemind();
+            Date remind2 = list2.get(j).getRemind();
+            if(remind1.getHours()<remind2.getHours() ||
+                    (remind1.getHours()==remind2.getHours() && remind1.getMinutes()<=remind2.getMinutes())){
+                list.add(list1.get(i++));
+            }else{
+                list.add(list2.get(j++));
+            }
+        }
+        while(i < list1.size()){
+            list.add(list1.get(i++));
+        }
+        while(j < list2.size()){
+            list.add(list2.get(j++));
+        }
+        return list;
+    }
 
     public static DayDateModel[] getWeekDayDateModels(Calendar calendar){
         LogUtils.i("getWeekDayDateModels", "year:"+calendar.get(Calendar.YEAR)+

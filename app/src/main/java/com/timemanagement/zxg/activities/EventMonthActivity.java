@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.adapter.EventMonthAdapter;
+import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.DateModelUtil;
@@ -81,15 +82,18 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
     }
 
     private void initData(){
-        Calendar calendar = Calendar.getInstance();
         Intent intent = getIntent();
-        mYear = intent.getIntExtra("year", calendar.get(Calendar.YEAR));
+        mYear = intent.getIntExtra("year", mCalendar.get(Calendar.YEAR));
         if (mYear<=0){
-            mYear = calendar.get(Calendar.YEAR);
+            mYear = mCalendar.get(Calendar.YEAR);
         }
-        mMonth = intent.getIntExtra("month", calendar.get(Calendar.MONTH)+1);
+        mMonth = intent.getIntExtra("month", mCalendar.get(Calendar.MONTH)+1);
         if (mMonth<=0){
-            mMonth = calendar.get(Calendar.MONTH)+1;
+            mMonth = mCalendar.get(Calendar.MONTH)+1;
+        }
+
+        if ((mMonth != mCalendar.get(Calendar.MONTH)+1) || (mYear != mCalendar.get(Calendar.YEAR))){
+            isCurrent = false;
         }
 
         mViewHolder.tv_left.setVisibility(View.VISIBLE);
@@ -144,11 +148,11 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        if (firstVisibleItem == INIT_POSITION){
-            isCurrent = true;
-        }else {
-            isCurrent = false;
-        }
+//        if (firstVisibleItem == INIT_POSITION){
+//            isCurrent = true;
+//        }else {
+//            isCurrent = false;
+//        }
 
         if (!isFirst) {
 
@@ -161,7 +165,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             int init_month = mCalendar.get(Calendar.MONTH)+1;
             int num_year = (firstVisibleItem - INIT_POSITION + offset)/12;
             int num_month = (firstVisibleItem - INIT_POSITION + offset)%12;
-            LogUtils.i("num", "INIT_POSITION"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
+            LogUtils.i("num", "offset:"+offset+",INIT_POSITION:"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
 
             if (firstVisibleItem < frontPoint) {
                 int[] start_month = DateModelUtil.getStandardMonth(
@@ -188,6 +192,13 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
                 mMonthDateModels.set(num, model);
                 LogUtils.i("num1", num+"");
             }
+            mYear = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getYear());
+            mMonth = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getMonth());
+            if ((mMonth == mCalendar.get(Calendar.MONTH)+1) && (mYear == mCalendar.get(Calendar.YEAR))){
+                isCurrent = true;
+            } else {
+                isCurrent = false;
+            }
             frontPoint = firstVisibleItem;
         }else {
             LogUtils.i("mMonthDateModels", mMonthDateModels.toString());
@@ -202,10 +213,25 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
             for (int i = 0; i < NUM_MONTH; i++) {
                 mMonthDateModels.set(i, monthDateModels.get(i));
             }
-            lv_month.setSelection(INIT_POSITION);
+            eventMonthAdapter.notifyDataSetChanged();
+            // 解决ListView滑动后，调用setSelection()方法无效的问题
+            lv_month.post(new Runnable() {
+                @Override
+                public void run() {
+                    lv_month.requestFocusFromTouch();
+                    lv_month.setSelection(INIT_POSITION);
+                }
+            });
             tv_left.setText(mMonthDateModels.get(5).getYear()+"年");
+            offset = 0;
+            isCurrent = true;
         } else {
-            EventDayActivity.startSelf(mContext, null, null);
+            DayDateModel _dayDateModel = null;
+            int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+            if (mMonthDateModels.get(5).getDayDateModels().size() > day) {
+                _dayDateModel = mMonthDateModels.get(5).getDayDateModels().get(day-1);
+            }
+            EventDayActivity.startSelf(mContext, _dayDateModel, null);
             ActivityManager.getInstance().finishActivity(mthis);
         }
     }
