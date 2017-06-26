@@ -19,8 +19,19 @@
         android:divider="@null"
         android:scrollbars="none"
         android:layout_weight="1"
-        android:layout_alignTop="@+id/layout_bottom">
+        android:layout_alignTop="@+id/layout_bottom"
+        android:visibility="gone">
     </ListView>
+    <!-- 新增RecyclerView代替ListView -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_year"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        android:scrollbars="none"
+        android:layout_weight="1"
+        android:layout_alignTop="@+id/layout_bottom">
+    </android.support.v7.widget.RecyclerView>
 
     <include layout="@layout/layout_bottom"
         android:id="@+id/layout_bottom"

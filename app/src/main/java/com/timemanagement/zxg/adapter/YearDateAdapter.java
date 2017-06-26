@@ -21,20 +21,20 @@ import java.util.List;
 public class YearDateAdapter extends BaseAdapter {
 
     private Context mContext;
-    private Calendar calendar;
+//    private Calendar calendar;
     private List<MonthDateModel> monthDateModels;
     private Calendar mCalendar;
 
     public YearDateAdapter(Context context, List<MonthDateModel> monthDateModels){
         mContext = context;
-        calendar = Calendar.getInstance();
+//        calendar = Calendar.getInstance();
         this.monthDateModels = monthDateModels;
         mCalendar = Calendar.getInstance();
     }
 
     public YearDateAdapter(Context context){
         mContext = context;
-        calendar = Calendar.getInstance();
+//        calendar = Calendar.getInstance();
     }
 
     @Override

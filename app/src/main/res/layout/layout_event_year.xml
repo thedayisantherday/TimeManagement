@@ -47,8 +47,103 @@
         android:layout_height="430dp"
         android:numColumns="3"
         android:scrollbars="none"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:visibility="gone">
 
     </GridView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+            <com.timemanagement.zxg.widget.YearMonthView
+                android:id="@+id/year_month_item11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

@@ -50,8 +50,8 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
             TYPE_EMERGENCY=3, TYPE_IMPORTANCE=4, TYPE_REPEAT=5, TYPE_REPEAT_END=6;
     private int popupWindowType;
 
-    private String[] emergencys = {"非常紧急", "紧急", "一般", "不紧急"};
-    private String[] importances = {"非常重要", "重要", "一般", "不重要"};
+    private String[] emergencys = {"非常紧急", "紧急", "一般"/*, "不紧急"*/};
+    private String[] importances = {"非常重要", "重要", "一般"/*, "不重要"*/};
     private String[] repeats = {"永不", "每天", "工作日", "每周", "每月", "每年"/*, "自定义"*/};
 
     private String[] hours = new String[24];

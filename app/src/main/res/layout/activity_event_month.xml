@@ -84,8 +84,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:scrollbars="none">
+            android:scrollbars="none"
+            android:visibility="gone">
         </ListView>
+        <!-- 新增RecyclerView代替ListView -->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:scrollbars="none"/>
         <TextView
             android:id="@+id/tv_month"
             android:layout_width="match_parent"

@@ -3,6 +3,8 @@ package com.timemanagement.zxg.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -10,7 +12,7 @@ import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
-import com.timemanagement.zxg.adapter.EventMonthAdapter;
+import com.timemanagement.zxg.adapter.EventMonthAdapter0;
 import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.timemanagement.R;
@@ -21,15 +23,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class EventMonthActivity extends BaseActivity  implements AbsListView.OnScrollListener, View.OnClickListener {
+public class EventMonthActivity extends BaseActivity  implements View.OnClickListener {
 
     private TextView tv_today, tv_repeat/*, tv_out_date*/;
     private ListView lv_month, lv_event_list;
+    private RecyclerView rv_month;
+    private LinearLayoutManager recyclerLayoutManagement = new LinearLayoutManager(mthis);
     private TextView tv_month;
     private View view_line;
 
     private List<MonthDateModel> mMonthDateModels;
-    private EventMonthAdapter eventMonthAdapter;
+//    private EventMonthAdapter eventMonthAdapter;
+    private EventMonthAdapter0 eventMonthAdapter;
     private Calendar mCalendar = Calendar.getInstance();
 
     private boolean isFirst = true;
@@ -69,7 +74,11 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
 
     private void initView() {
         tv_month = (TextView) findViewById(R.id.tv_month);
-        lv_month = (ListView) findViewById(R.id.lv_month);
+//        lv_month = (ListView) findViewById(R.id.lv_month);
+        rv_month = (RecyclerView) findViewById(R.id.rv_month);
+        //使RecyclerView保持固定的大小，用于自身的优化
+        rv_month.setHasFixedSize(true);
+        rv_month.setLayoutManager(recyclerLayoutManagement);
         lv_event_list = (ListView) findViewById(R.id.lv_event_list);
         view_line = findViewById(R.id.view_line);
 
@@ -102,10 +111,14 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
         offset =  (mYear-mCalendar.get(Calendar.YEAR))*12+mMonth-(mCalendar.get(Calendar.MONTH)+1);
         LogUtils.i("EventMonthActivity", "mYear:"+mYear+", mMonth:"+mMonth);
         mMonthDateModels = getList(mYear, mMonth);
-        eventMonthAdapter = new EventMonthAdapter(mContext, mMonthDateModels);
+        /*eventMonthAdapter = new EventMonthAdapter(mContext, mMonthDateModels);
         lv_month.setAdapter(eventMonthAdapter);
         lv_month.setSelection(INIT_POSITION);
-        lv_month.setOnScrollListener(this);
+        lv_month.setOnScrollListener(new EventMonthListViewScrollListerer());*/
+        eventMonthAdapter = new EventMonthAdapter0(mContext, mMonthDateModels);
+        rv_month.setAdapter(eventMonthAdapter);
+        rv_month.scrollToPosition(INIT_POSITION);
+        rv_month.setOnScrollListener(new EventMonthRecyclerScrollListerer());
     }
 
     /**
@@ -114,7 +127,7 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
      */
     public List<MonthDateModel> getList(int year, int month){
         List<MonthDateModel> list =  new ArrayList<MonthDateModel>();
-        if (year>0 && month>0 && month<12){
+        if (year>0 && month>0 && month<=12){
             for (int i = 0; i < NUM_MONTH; i++) {
                 if (month-(NUM_MONTH-1)/2+i<=0){
                     if (year<=1){
@@ -131,79 +144,155 @@ public class EventMonthActivity extends BaseActivity  implements AbsListView.OnS
         return list;
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        switch (scrollState){
-            case 0:
-                mViewHolder.tv_left.setText(eventMonthAdapter.getItem(frontPoint).getYear() + "年");
-                tv_month.setVisibility(View.GONE);
-                break;
-            default:
-                tv_month.setVisibility(View.VISIBLE);
-                break;
+    class EventMonthRecyclerScrollListerer extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(RecyclerView view, int scrollState) {
+            switch (scrollState){
+                case 0:
+                    mViewHolder.tv_left.setText(eventMonthAdapter.getItem(frontPoint).getYear() + "年");
+                    tv_month.setVisibility(View.GONE);
+                    break;
+                default:
+                    tv_month.setVisibility(View.VISIBLE);
+                    break;
+            }
+            LogUtils.i("onScrollStateChanged", scrollState+"");
         }
-        LogUtils.i("onScrollStateChanged", scrollState+"");
+
+        @Override
+        public void onScrolled(RecyclerView view, int dx, int dy) {
+
+            if (!isFirst) {
+                int firstVisibleItem = recyclerLayoutManagement.findFirstVisibleItemPosition();
+                LogUtils.i(TAG, "frontPoint:"+frontPoint+",firstVisibleItem:" + firstVisibleItem);
+
+                if (firstVisibleItem != frontPoint) {
+                    tv_month.setText(eventMonthAdapter.getItem(firstVisibleItem).getYear() + "年"
+                            + eventMonthAdapter.getItem(firstVisibleItem).getMonth() + "月");
+                }
+                int num;
+                int init_year = mCalendar.get(Calendar.YEAR);
+                int init_month = mCalendar.get(Calendar.MONTH)+1;
+                int num_year = (firstVisibleItem - INIT_POSITION + offset)/12;
+                int num_month = (firstVisibleItem - INIT_POSITION + offset)%12;
+                LogUtils.i("num", "offset:"+offset+",INIT_POSITION:"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
+
+                if (firstVisibleItem < frontPoint) {
+                    int[] start_month = DateModelUtil.getStandardMonth(
+                            init_year + num_year, init_month + num_month-(NUM_MONTH-1)/2);
+                    MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
+
+                    num = (firstVisibleItem - INIT_POSITION) % NUM_MONTH;
+                    if (num < 0){
+                        num = num + NUM_MONTH;
+                    }
+                    mMonthDateModels.set(num, model);
+                    LogUtils.i("num0", num+"");
+                }
+
+                if (firstVisibleItem > frontPoint) {
+                    int[] start_month = DateModelUtil.getStandardMonth(
+                            init_year + num_year, init_month + num_month+(NUM_MONTH-1)/2);
+                    MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
+
+                    num = (firstVisibleItem - INIT_POSITION - (NUM_MONTH-(NUM_MONTH-1)/2*2)) % NUM_MONTH;
+                    if (num < 0){
+                        num = num + NUM_MONTH;
+                    }
+                    mMonthDateModels.set(num, model);
+                    LogUtils.i("num1", num+"");
+                }
+                mYear = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getYear());
+                mMonth = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getMonth());
+                if ((mMonth == mCalendar.get(Calendar.MONTH)+1) && (mYear == mCalendar.get(Calendar.YEAR))){
+                    isCurrent = true;
+                } else {
+                    isCurrent = false;
+                }
+                frontPoint = firstVisibleItem;
+            }else {
+                LogUtils.i("mMonthDateModels", mMonthDateModels.toString());
+                mViewHolder.tv_left.setText(eventMonthAdapter.getItem(INIT_POSITION).getYear() + "年");
+                isFirst = false;
+            }
+        }
     }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-//        if (firstVisibleItem == INIT_POSITION){
-//            isCurrent = true;
-//        }else {
-//            isCurrent = false;
-//        }
-
-        if (!isFirst) {
-
-            if (firstVisibleItem != frontPoint) {
-                tv_month.setText(eventMonthAdapter.getItem(firstVisibleItem).getYear() + "年"
-                        + eventMonthAdapter.getItem(firstVisibleItem).getMonth() + "月");
+    class EventMonthListViewScrollListerer implements AbsListView.OnScrollListener {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            switch (scrollState){
+                case 0:
+                    mViewHolder.tv_left.setText(eventMonthAdapter.getItem(frontPoint).getYear() + "年");
+                    tv_month.setVisibility(View.GONE);
+                    break;
+                default:
+                    tv_month.setVisibility(View.VISIBLE);
+                    break;
             }
-            int num;
-            int init_year = mCalendar.get(Calendar.YEAR);
-            int init_month = mCalendar.get(Calendar.MONTH)+1;
-            int num_year = (firstVisibleItem - INIT_POSITION + offset)/12;
-            int num_month = (firstVisibleItem - INIT_POSITION + offset)%12;
-            LogUtils.i("num", "offset:"+offset+",INIT_POSITION:"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
+            LogUtils.i("onScrollStateChanged", scrollState+"");
+        }
 
-            if (firstVisibleItem < frontPoint) {
-                int[] start_month = DateModelUtil.getStandardMonth(
-                        init_year + num_year, init_month + num_month-(NUM_MONTH-1)/2);
-                MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                num = (firstVisibleItem - INIT_POSITION) % NUM_MONTH;
-                if (num < 0){
-                    num = num + NUM_MONTH;
+    //        if (firstVisibleItem == INIT_POSITION){
+    //            isCurrent = true;
+    //        }else {
+    //            isCurrent = false;
+    //        }
+
+            if (!isFirst) {
+
+                if (firstVisibleItem != frontPoint) {
+                    tv_month.setText(eventMonthAdapter.getItem(firstVisibleItem).getYear() + "年"
+                            + eventMonthAdapter.getItem(firstVisibleItem).getMonth() + "月");
                 }
-                mMonthDateModels.set(num, model);
-                LogUtils.i("num0", num+"");
-            }
+                int num;
+                int init_year = mCalendar.get(Calendar.YEAR);
+                int init_month = mCalendar.get(Calendar.MONTH)+1;
+                int num_year = (firstVisibleItem - INIT_POSITION + offset)/12;
+                int num_month = (firstVisibleItem - INIT_POSITION + offset)%12;
+                LogUtils.i("num", "offset:"+offset+",INIT_POSITION:"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
 
-            if (firstVisibleItem > frontPoint) {
-                int[] start_month = DateModelUtil.getStandardMonth(
-                        init_year + num_year, init_month + num_month+(NUM_MONTH-1)/2);
-                MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
+                if (firstVisibleItem < frontPoint) {
+                    int[] start_month = DateModelUtil.getStandardMonth(
+                            init_year + num_year, init_month + num_month-(NUM_MONTH-1)/2);
+                    MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
 
-                num = (firstVisibleItem - INIT_POSITION - (NUM_MONTH-(NUM_MONTH-1)/2*2)) % NUM_MONTH;
-                if (num < 0){
-                    num = num + NUM_MONTH;
+                    num = (firstVisibleItem - INIT_POSITION) % NUM_MONTH;
+                    if (num < 0){
+                        num = num + NUM_MONTH;
+                    }
+                    mMonthDateModels.set(num, model);
+                    LogUtils.i("num0", num+"");
                 }
-                mMonthDateModels.set(num, model);
-                LogUtils.i("num1", num+"");
+
+                if (firstVisibleItem > frontPoint) {
+                    int[] start_month = DateModelUtil.getStandardMonth(
+                            init_year + num_year, init_month + num_month+(NUM_MONTH-1)/2);
+                    MonthDateModel model = DateModelUtil.getMonthDateModel(start_month[0], start_month[1]);
+
+                    num = (firstVisibleItem - INIT_POSITION - (NUM_MONTH-(NUM_MONTH-1)/2*2)) % NUM_MONTH;
+                    if (num < 0){
+                        num = num + NUM_MONTH;
+                    }
+                    mMonthDateModels.set(num, model);
+                    LogUtils.i("num1", num+"");
+                }
+                mYear = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getYear());
+                mMonth = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getMonth());
+                if ((mMonth == mCalendar.get(Calendar.MONTH)+1) && (mYear == mCalendar.get(Calendar.YEAR))){
+                    isCurrent = true;
+                } else {
+                    isCurrent = false;
+                }
+                frontPoint = firstVisibleItem;
+            }else {
+                LogUtils.i("mMonthDateModels", mMonthDateModels.toString());
+                mViewHolder.tv_left.setText(eventMonthAdapter.getItem(INIT_POSITION).getYear() + "年");
+                isFirst = false;
             }
-            mYear = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getYear());
-            mMonth = Integer.valueOf(eventMonthAdapter.getItem(firstVisibleItem).getMonth());
-            if ((mMonth == mCalendar.get(Calendar.MONTH)+1) && (mYear == mCalendar.get(Calendar.YEAR))){
-                isCurrent = true;
-            } else {
-                isCurrent = false;
-            }
-            frontPoint = firstVisibleItem;
-        }else {
-            LogUtils.i("mMonthDateModels", mMonthDateModels.toString());
-            mViewHolder.tv_left.setText(eventMonthAdapter.getItem(INIT_POSITION).getYear() + "年");
-            isFirst = false;
         }
     }
 

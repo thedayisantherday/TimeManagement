@@ -18,6 +18,7 @@ import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.DateModelUtil;
+import com.timemanagement.zxg.utils.DimensionUtils;
 import com.timemanagement.zxg.utils.LogUtils;
 import com.timemanagement.zxg.utils.LunarUtils;
 import com.timemanagement.zxg.utils.TimeUtils;
@@ -68,6 +69,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
 
         initView();
         initData(mDayDateModel);
+        gotoCurrent();  
     }
 
     /**
@@ -114,9 +116,6 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         LogUtils.i(TAG, _eventModel+"");
         if (mDayDateModel != null) {
             initData(mDayDateModel);
-        }
-        if (_eventModel == null) {
-            gotoCurrent();
         }
     }
 
@@ -234,7 +233,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
             case R.id.ll_left:
                 if (mDayDateModel == null || mDayDateModel.getYear().equals("") || mDayDateModel.getMonth().equals("")){
                     Calendar calendar = Calendar.getInstance();
-                    EventMonthActivity.startSelf(mContext, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+                    EventMonthActivity.startSelf(mContext, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1);
                 } else {
                     EventMonthActivity.startSelf(mContext,
                             Integer.valueOf(mDayDateModel.getYear()), Integer.valueOf(mDayDateModel.getMonth()));
@@ -323,29 +322,44 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         // 为当天的所有事件添加一个EventDialog
         List<EventModel> eventModels = new DatabaseUtil(mContext).queryByDate(_calendar.getTime());
         if (eventModels != null && eventModels.size() > 0) {
+            int dialogWidth = 0; // 事件对话框的宽度，用于确定重叠的dialog有多少个
+            int overlapStart = -100;
             for (int i=0; i < eventModels.size(); i++) {
                 mEventDialog = new EventDialog(mContext);
                 if (i>0) {
                     int repeat1 = eventModels.get(i-1).getRemind().getHours()*60 + eventModels.get(i-1).getRemind().getMinutes();
-                    int repeatAgain = 60+repeat1;
+                    int repeatAgain = 20+repeat1;
                     if (eventModels.get(i-1).getRemindAgain() != null) {
                         repeatAgain = eventModels.get(i-1).getRemindAgain().getHours()*60 + eventModels.get(i-1).getRemindAgain().getMinutes();
                     }
                     int repeat2 = eventModels.get(i).getRemind().getHours()*60 + eventModels.get(i).getRemind().getMinutes();
-                    if (repeat2 - repeat1 >= 15 && repeatAgain - repeat1 >= 0 && repeatAgain - repeat2 >= 0) {
-                        int leftMargin = ((RelativeLayout.LayoutParams)view_event_container.getChildAt(2+i-1).getLayoutParams()).leftMargin;
-                        setEventDialog(eventModels.get(i), leftMargin+10, 0);
-                    } else if (repeat2 - repeat1 < 15 && repeat2 - repeat1 >= 0) {
-                        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view_event_container.getChildAt(2+i-1).getLayoutParams();
-                        setEventDialog(eventModels.get(i), params.leftMargin+params.width/2, params.width/2);
-                        params.width = params.width/2;
-                    } else {
+                    if (repeat2 - overlapStart >= 25) {
                         setEventDialog(eventModels.get(i), 0, 0);
+                    } else {
+                        if (repeat2 - repeat1 >= 15 && repeatAgain - repeat1 >= 0 && repeatAgain - repeat2 >= 0) {
+                            int leftMargin = ((RelativeLayout.LayoutParams) view_event_container.getChildAt(2 + i - 1).getLayoutParams()).leftMargin;
+                            setEventDialog(eventModels.get(i), leftMargin + 10, 0);
+                        } else if (repeat2 - repeat1 < 15 && repeat2 - repeat1 >= 0) {
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view_event_container.getChildAt(2 + i - 1).getLayoutParams();
+                            int ratio = dialogWidth / params.width;
+                            setEventDialog(eventModels.get(i), DimensionUtils.getWidthPixels() - dialogWidth / (1 + ratio), dialogWidth / (1 + ratio));
+                            for (int j = ratio; j >= 1; j--) {
+                                RelativeLayout.LayoutParams _params = (RelativeLayout.LayoutParams) view_event_container.getChildAt(2 + i - j).getLayoutParams();
+                                _params.width = dialogWidth / (1 + ratio);
+                                _params.leftMargin = DimensionUtils.getWidthPixels() - dialogWidth * (1 + j) / (1 + ratio);
+                            }
+                            view_event_container.addView(mEventDialog.view_event_dialog);
+                            continue;
+                        } else {
+                            setEventDialog(eventModels.get(i), 0, 0);
+                        }
                     }
                 } else {
                     setEventDialog(eventModels.get(i), 0, 0);
                 }
                 view_event_container.addView(mEventDialog.view_event_dialog);
+                dialogWidth = ((RelativeLayout.LayoutParams)view_event_container.getChildAt(2+i).getLayoutParams()).width;
+                overlapStart = eventModels.get(i).getRemind().getHours()*60 + eventModels.get(i).getRemind().getMinutes();
             }
         }
         mEventDialogCount = view_event_container.getChildCount();
@@ -404,6 +418,7 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
         mViewPagerAdapter.notifyDataSetChanged();
         vp_date.setCurrentItem(2);
         mPosition = 2;
+        offsetWeek = 0;
     }
 
     @Override
@@ -462,7 +477,11 @@ public class EventDayActivity extends BaseActivity implements View.OnClickListen
                 case 3:
                     LogUtils.i("onPageSelected23", "offsetWeek:"+offsetWeek+",position:"+position+",mPosition:"+mPosition);
                     offsetWeek = offsetWeek + position - mPosition;
-                    mDayDateModels.set(position-1+position-mPosition, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek+position-mPosition)*7)));
+                    int _position = position-1+position-mPosition;
+                    if (_position < 0) {
+                        _position = _position % mDayDateModels.size() + mDayDateModels.size();
+                    }
+                    mDayDateModels.set(_position, DateModelUtil.getWeekDayDateModels(TimeUtils.standardDate(calendar, (offsetWeek+position-mPosition)*7)));
                     mDayDateModel = mDayDateModels.get(position-1)[EventDayView.mWeekCheck-1];
                     setDateDetail(mDayDateModel);
                     mViewHolder.tv_left.setText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月");

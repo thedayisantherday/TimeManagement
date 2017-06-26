@@ -26,13 +26,11 @@ import java.util.List;
 public class EventMonthAdapter extends BaseAdapter {
 
     private Context mContext;
-    private Calendar calendar;
     private List<MonthDateModel> monthDateModels;
     private Calendar mCalendar;
 
     public EventMonthAdapter(Context context, List<MonthDateModel> monthDateModels){
         mContext = context;
-        calendar = Calendar.getInstance();
         this.monthDateModels = monthDateModels;
 
         mCalendar = Calendar.getInstance();
@@ -40,7 +38,7 @@ public class EventMonthAdapter extends BaseAdapter {
 
     public EventMonthAdapter(Context context, int year, int month){
         mContext = context;
-        calendar = Calendar.getInstance();
+        mCalendar = Calendar.getInstance();
     }
 
     @Override

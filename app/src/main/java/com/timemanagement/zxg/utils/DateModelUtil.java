@@ -92,7 +92,7 @@ public class DateModelUtil {
             cal.setTime(date);
             int week_index = cal.get(Calendar.DAY_OF_WEEK) - 1;
             dayDateModel.setWeek(String.valueOf(week_index));
-            if (isLunar && year >= 1900 && year <= 2100) {
+            if (isLunar && year >= 1900 && year < 2050) {
                 LunarUtils lunarUtils = new LunarUtils(cal);
                 dayDateModel.setLunar(lunarUtils.get_month() + lunarUtils.get_date());
             }

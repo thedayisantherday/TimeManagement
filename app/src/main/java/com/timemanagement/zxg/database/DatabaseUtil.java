@@ -204,7 +204,7 @@ public class DatabaseUtil {
     public List<EventModel> queryByDate(Date date){
         SQLiteDatabase db = helper.getReadableDatabase();
         List<EventModel> list1 = new ArrayList<EventModel>();
-        Cursor cursor = db.query(helper.TABLE_NAME, null, "date=?",new String[]{TimeUtils.dateToStrShort(date)}, null, null, "datetime(remind)");
+        Cursor cursor = db.query(helper.TABLE_NAME, null, "date=? and repeat=?",new String[]{TimeUtils.dateToStrShort(date), "0"}, null, null, "datetime(remind)");
 
         while(cursor.moveToNext()){
             list1.add(cursor2EventModel(cursor));

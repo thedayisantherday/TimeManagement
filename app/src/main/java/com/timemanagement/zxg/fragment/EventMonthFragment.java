@@ -170,7 +170,7 @@ public class EventMonthFragment extends Fragment implements AbsListView.OnScroll
         if (!isFirst) {
 
             tv_month.setText(eventMonthAdapter.getItem(firstVisibleItem).getYear()+"年"
-                +eventMonthAdapter.getItem(firstVisibleItem).getMonth()+"月");
+                + eventMonthAdapter.getItem(firstVisibleItem).getMonth()+"月");
 
             int num;
             int init_year = mCalendar.get(Calendar.YEAR);

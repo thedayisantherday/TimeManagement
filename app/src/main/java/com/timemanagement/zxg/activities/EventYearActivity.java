@@ -3,6 +3,8 @@ package com.timemanagement.zxg.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -10,7 +12,7 @@ import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
-import com.timemanagement.zxg.adapter.EventYearAdapter;
+import com.timemanagement.zxg.adapter.EventYearAdapter0;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.model.YearDateModel;
 import com.timemanagement.zxg.timemanagement.R;
@@ -21,13 +23,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class EventYearActivity extends BaseActivity  implements AbsListView.OnScrollListener,View.OnClickListener {
+public class EventYearActivity extends BaseActivity  implements View.OnClickListener {
 
     private TextView tv_today, tv_repeat/*, tv_out_date*/;
 
     private ListView lv_year;
+    private RecyclerView rv_year;
+    private LinearLayoutManager recyclerLayoutManagement = new LinearLayoutManager(mthis);
     private List<YearDateModel> mYearDateModels;
-    private EventYearAdapter eventYearAdapter;
+//    private EventYearAdapter eventYearAdapter;
+    private EventYearAdapter0 eventYearAdapter;
     private Calendar mCalendar = Calendar.getInstance();
 
     private boolean isFirst = true;
@@ -51,6 +56,10 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
 
     private void initView(){
         lv_year = (ListView)findViewById(R.id.lv_year);
+        rv_year = (RecyclerView) findViewById(R.id.rv_year);
+        //使RecyclerView保持固定的大小，用于自身的优化
+        rv_year.setHasFixedSize(true);
+        rv_year.setLayoutManager(recyclerLayoutManagement);
 
         tv_today = (TextView)findViewById(R.id.tv_today);
         tv_today.setOnClickListener(this);
@@ -68,10 +77,14 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
         }
         offset = mYear-mCalendar.get(Calendar.YEAR);
         mYearDateModels = getYearList(mYear);
-        eventYearAdapter = new EventYearAdapter(mContext, mYearDateModels);
+        /*eventYearAdapter = new EventYearAdapter(mContext, mYearDateModels);
         lv_year.setAdapter(eventYearAdapter);
         lv_year.setSelection(INIT_POSITION);
-        lv_year.setOnScrollListener(this);
+        lv_year.setOnScrollListener(new ListViewOnScrollListener());*/
+        eventYearAdapter = new EventYearAdapter0(mContext, mYearDateModels);
+        rv_year.setAdapter(eventYearAdapter);
+        rv_year.scrollToPosition(INIT_POSITION);
+        rv_year.setOnScrollListener(new RecyclerViewOnScrollListener());
     }
 
     public List<YearDateModel> getYearList(int year){
@@ -99,65 +112,125 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
         return list;
     }
 
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {
 
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            int firstVisibleItem = recyclerLayoutManagement.findFirstVisibleItemPosition();
+            if (firstVisibleItem == INIT_POSITION){
+                isCurrent = true;
+            }else {
+                isCurrent = false;
+            }
+
+            if (!isFirst) {
+                int num;
+                int init_year = mCalendar.get(Calendar.YEAR);
+                int num_year = firstVisibleItem - INIT_POSITION + offset;
+                LogUtils.i("num", "INIT_POSITION"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
+
+                if (firstVisibleItem < frontPoint) {
+                    int frontYear = init_year+num_year-(NUM_YEAR-1)/2;
+                    YearDateModel yearDateModel = new YearDateModel();
+                    yearDateModel.setYear(frontYear+"");
+                    if ( frontYear <= 0){
+                        frontYear = Math.abs(frontYear)+1;
+                    }
+                    yearDateModel.setMonthDateModels(getMonthList(frontYear));
+
+                    num = (firstVisibleItem - INIT_POSITION) % NUM_YEAR;
+                    if (num < 0){
+                        num = num + NUM_YEAR;
+                    }
+                    mYearDateModels.set(num, yearDateModel);
+                    LogUtils.i("num0", num+"");
+                }
+
+                if (firstVisibleItem > frontPoint) {
+                    int latterYear = init_year+num_year+(NUM_YEAR-1)/2;
+                    YearDateModel yearDateModel = new YearDateModel();
+                    yearDateModel.setYear(latterYear+"");
+                    yearDateModel.setMonthDateModels(getMonthList(latterYear));
+
+                    num = (num_year - offset - (NUM_YEAR-(NUM_YEAR-1)/2*2)) % NUM_YEAR;
+                    if (num < 0){
+                        num = num + NUM_YEAR;
+                    }
+                    mYearDateModels.set(num, yearDateModel);
+                    LogUtils.i("num0", num+"");
+                }
+                frontPoint = firstVisibleItem;
+            }else {
+                isFirst = false;
+            }
+        }
     }
 
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    class ListViewOnScrollListener implements AbsListView.OnScrollListener {
 
-        if (firstVisibleItem == INIT_POSITION){
-            isCurrent = true;
-        }else {
-            isCurrent = false;
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
         }
 
-        if (!isFirst) {
-            int num;
-            int init_year = mCalendar.get(Calendar.YEAR);
-            int num_year = firstVisibleItem - INIT_POSITION + offset;
-            LogUtils.i("num", "INIT_POSITION"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-            if (firstVisibleItem < frontPoint) {
-                int frontYear = init_year+num_year-(NUM_YEAR-1)/2;
-                YearDateModel yearDateModel = new YearDateModel();
-                yearDateModel.setYear(frontYear+"");
-                if ( frontYear <= 0){
-                    frontYear = Math.abs(frontYear)+1;
-                }
-                yearDateModel.setMonthDateModels(getMonthList(frontYear));
-
-                num = (firstVisibleItem - INIT_POSITION) % NUM_YEAR;
-                if (num < 0){
-                    num = num + NUM_YEAR;
-                }
-                mYearDateModels.set(num, yearDateModel);
-                LogUtils.i("num0", num+"");
+            if (firstVisibleItem == INIT_POSITION){
+                isCurrent = true;
+            }else {
+                isCurrent = false;
             }
 
-            if (firstVisibleItem > frontPoint) {
-                int latterYear = init_year+num_year+(NUM_YEAR-1)/2;
-                YearDateModel yearDateModel = new YearDateModel();
-                yearDateModel.setYear(latterYear+"");
-                yearDateModel.setMonthDateModels(getMonthList(latterYear));
+            if (!isFirst) {
+                int num;
+                int init_year = mCalendar.get(Calendar.YEAR);
+                int num_year = firstVisibleItem - INIT_POSITION + offset;
+                LogUtils.i("num", "INIT_POSITION"+INIT_POSITION+",firstVisibleItem:"+firstVisibleItem);
 
-                num = (num_year - offset - (NUM_YEAR-(NUM_YEAR-1)/2*2)) % NUM_YEAR;
-                if (num < 0){
-                    num = num + NUM_YEAR;
+                if (firstVisibleItem < frontPoint) {
+                    int frontYear = init_year+num_year-(NUM_YEAR-1)/2;
+                    YearDateModel yearDateModel = new YearDateModel();
+                    yearDateModel.setYear(frontYear+"");
+                    if ( frontYear <= 0){
+                        frontYear = Math.abs(frontYear)+1;
+                    }
+                    yearDateModel.setMonthDateModels(getMonthList(frontYear));
+
+                    num = (firstVisibleItem - INIT_POSITION) % NUM_YEAR;
+                    if (num < 0){
+                        num = num + NUM_YEAR;
+                    }
+                    mYearDateModels.set(num, yearDateModel);
+                    LogUtils.i("num0", num+"");
                 }
-                mYearDateModels.set(num, yearDateModel);
-                LogUtils.i("num0", num+"");
+
+                if (firstVisibleItem > frontPoint) {
+                    int latterYear = init_year+num_year+(NUM_YEAR-1)/2;
+                    YearDateModel yearDateModel = new YearDateModel();
+                    yearDateModel.setYear(latterYear+"");
+                    yearDateModel.setMonthDateModels(getMonthList(latterYear));
+
+                    num = (num_year - offset - (NUM_YEAR-(NUM_YEAR-1)/2*2)) % NUM_YEAR;
+                    if (num < 0){
+                        num = num + NUM_YEAR;
+                    }
+                    mYearDateModels.set(num, yearDateModel);
+                    LogUtils.i("num0", num+"");
+                }
+                frontPoint = firstVisibleItem;
+            }else {
+                isFirst = false;
             }
-            frontPoint = firstVisibleItem;
-        }else {
-            isFirst = false;
         }
     }
 
     @Override
     public void initHead(ViewHolder viewHolder) {
         viewHolder.iv_left.setImageResource(R.drawable.icon_share);
+        viewHolder.iv_left.setVisibility(View.GONE);
         viewHolder.iv_right.setVisibility(View.VISIBLE);
         viewHolder.iv_right.setOnClickListener(this);
 //        viewHolder.iv_right2.setVisibility(View.VISIBLE);
@@ -190,7 +263,8 @@ public class EventYearActivity extends BaseActivity  implements AbsListView.OnSc
             for (int i = 0; i < NUM_YEAR; i++) {
                 mYearDateModels.set(i, yearDateModels.get(i));
             }
-            lv_year.setSelection(INIT_POSITION);
+//            lv_year.setSelection(INIT_POSITION);
+            rv_year.scrollToPosition(INIT_POSITION);
         } else {
             EventMonthActivity.startSelf(mContext,
                     mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH)+1);

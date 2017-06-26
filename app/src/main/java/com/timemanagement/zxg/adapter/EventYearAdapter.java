@@ -56,6 +56,7 @@ public class EventYearAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup arg2) {
+        LogUtils.i("gridview","position:"+position);
         ViewHolder viewHolder = null;
         if(convertView == null) {
             viewHolder = new ViewHolder();
