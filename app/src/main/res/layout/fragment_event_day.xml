@@ -16,7 +16,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="日"
-            android:textSize="@dimen/sp_10"/>
+            android:textSize="@dimen/sp_10"
+            android:textColor="@color/color_8888"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,19 +64,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="六"
-            android:textSize="@dimen/sp_10"/>
+            android:textSize="@dimen/sp_10"
+            android:textColor="@color/color_8888"/>
     </LinearLayout>
-
-    <!--<android.support.design.widget.TabLayout
-        android:id="@+id/tl_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:tabIndicatorHeight="0dp"
-        app:tabMaxWidth="100dp"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/white" />-->
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_date"
@@ -84,19 +75,44 @@
 
     </android.support.v4.view.ViewPager>
 
-    <TextView
-        android:id="@+id/tv_date_detail"
+    <EditText
+        android:id="@+id/et_date_detail"
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:gravity="center"
         android:textSize="@dimen/sp_14"
-        android:text="134354657689"/>
+        android:text="1"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_date_detail"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:textSize="@dimen/sp_14"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/black"/>
 
-    <include layout="@layout/layout_event_contain" />
+    <!--<include layout="@layout/layout_event_contain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_alignTop="@+id/layout_bottom"/>-->
 
+    <ScrollView
+        android:id="@+id/sv_event_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="15dp"
+        android:layout_weight="1"
+        android:layout_alignTop="@+id/layout_bottom"
+        android:background="@color/color_efeff4">
+        <com.timemanagement.zxg.widget.EventContainerView
+            android:id="@+id/view_event_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </ScrollView>
 </LinearLayout>

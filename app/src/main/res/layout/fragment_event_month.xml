@@ -75,23 +75,26 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ListView
-            android:id="@+id/lv_month"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_alignTop="@+id/layout_bottom"
+        android:background="@color/color_efeff4">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:scrollbars="none">
-        </ListView>
+            android:scrollbars="none"/>
         <TextView
             android:id="@+id/tv_month"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/dp_5"
             android:layout_alignParentTop="true"
-            android:text="2017年2月"
             android:gravity="center"
-            android:background="@color/white"/>
+            android:background="@color/white"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 </LinearLayout>

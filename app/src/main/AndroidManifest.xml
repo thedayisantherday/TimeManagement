@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.timemanagement.zxg.activities.EventDayActivity"
+            android:name="com.timemanagement.zxg.activities.MainActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
@@ -30,7 +30,7 @@
         </activity>
         <activity android:name="com.timemanagement.zxg.activities.EventEditActivity" />
         <activity android:name="com.timemanagement.zxg.activities.TestActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.MainActivity" />
+        <activity android:name="com.timemanagement.zxg.activities.EventDayActivity" />
         <activity android:name="com.timemanagement.zxg.activities.EventMonthActivity" />
         <activity android:name="com.timemanagement.zxg.activities.EventYearActivity" />
         <activity android:name="com.timemanagement.zxg.activities.EventRepeatActivity" />

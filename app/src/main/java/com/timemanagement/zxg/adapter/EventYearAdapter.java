@@ -1,97 +1,104 @@
 package com.timemanagement.zxg.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.EventMonthActivity;
 import com.timemanagement.zxg.activities.EventYearActivity;
+import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
+import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.model.YearDateModel;
 import com.timemanagement.zxg.timemanagement.R;
-import com.timemanagement.zxg.utils.LogUtils;
+import com.timemanagement.zxg.widget.YearMonthView;
 
-import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by zxg on 17/2/12.
+ * Created by zxg on 17/6/8.
  */
 
-public class EventYearAdapter extends BaseAdapter {
-
+public class EventYearAdapter extends RecyclerView.Adapter<EventYearAdapter.RecyclerViewHolder> {
     private Context mContext;
-    private Calendar calendar;
     private List<YearDateModel> yearDateModels;
-    private YearDateAdapter yearDateAdapter;
 
     public EventYearAdapter(Context context, List<YearDateModel> yearDateModels){
         mContext = context;
-        calendar = Calendar.getInstance();
         this.yearDateModels = yearDateModels;
     }
 
     public EventYearAdapter(Context context){
         mContext = context;
-        calendar = Calendar.getInstance();
     }
 
     @Override
-    public int getCount() {
+    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_event_year, parent, false);
+        RecyclerViewHolder holder = new RecyclerViewHolder(view);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerViewHolder viewHolder, final int position) {
+
+        final YearDateModel yearDateModel = getItem(position);
+        viewHolder.tv_year.setText(yearDateModel.getYear()+"年");
+        viewHolder.tv_lunar_year.setText(yearDateModel.getLunarYear()+"年");
+        for (int i = 0; i < yearDateModel.getMonthDateModels().size(); i++) {
+            final MonthDateModel monthDateModel = yearDateModel.getMonthDateModels().get(i);
+            viewHolder.year_month[i].setData(monthDateModel.getDayDateModels());
+            viewHolder.year_month[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EventMonthActivity.startSelf(mContext,
+                            Integer.valueOf(monthDateModel.getYear()), Integer.valueOf(monthDateModel.getMonth()));
+                    ActivityManager.getInstance().finishActivity((EventYearActivity)mContext);
+                }
+            });
+        }
+    }
+
+    @Override
+    public int getItemCount() {
         return Integer.MAX_VALUE;
     }
 
-    @Override
     public YearDateModel getItem(int position) {
-        return yearDateModels.get(position%yearDateModels.size());
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position%yearDateModels.size();
-    }
-
-    @Override
-    public View getView(final int position, View convertView, ViewGroup arg2) {
-        LogUtils.i("gridview","position:"+position);
-        ViewHolder viewHolder = null;
-        if(convertView == null) {
-            viewHolder = new ViewHolder();
-            convertView = View.inflate(mContext, R.layout.layout_event_year, null);
-            viewHolder.tv_year = (TextView) convertView.findViewById(R.id.tv_year);
-            viewHolder.tv_lunar_year = (TextView) convertView.findViewById(R.id.tv_lunar_year);
-            viewHolder.gl_year = (GridView) convertView.findViewById(R.id.gl_year);
-            convertView.setTag(viewHolder);
-        }else{
-            viewHolder = (ViewHolder) convertView.getTag();
+        if (yearDateModels == null || yearDateModels.size() == 0){
+            return null;
         }
-
-        viewHolder.gl_year.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                LogUtils.i("gridview","year:"+getItem(position).getMonthDateModels().get(pos).getYear()+", month:"+
-                        getItem(position).getMonthDateModels().get(pos).getMonth());
-                EventMonthActivity.startSelf(mContext, Integer.valueOf(getItem(position).getMonthDateModels().get(pos).getYear()),
-                        Integer.valueOf(getItem(position).getMonthDateModels().get(pos).getMonth()));
-                ((EventYearActivity)mContext).finish();
-            }
-        });
-
-        YearDateModel yearDateModel = yearDateModels.get(position%yearDateModels.size());
-        viewHolder.tv_year.setText(yearDateModel.getYear()+"年");
-        viewHolder.tv_lunar_year.setText(yearDateModel.getLunarYear()+"年");
-
-        yearDateAdapter = new YearDateAdapter(mContext, yearDateModel.getMonthDateModels());
-        viewHolder.gl_year.setAdapter(yearDateAdapter);
-
-        return convertView;
+        int _position = position%yearDateModels.size();
+        if (_position < 0){
+            _position = _position + yearDateModels.size();
+        }
+        return yearDateModels.get(_position);
     }
 
-    private class ViewHolder {
+    class RecyclerViewHolder extends RecyclerView.ViewHolder{
+
         public TextView tv_year, tv_lunar_year;
-        public GridView gl_year;
+        public YearMonthView[] year_month = new YearMonthView[12];
+
+        public RecyclerViewHolder(View convertView) {
+            super(convertView);
+            tv_year = (TextView) convertView.findViewById(R.id.tv_year);
+            tv_lunar_year = (TextView) convertView.findViewById(R.id.tv_lunar_year);
+
+            year_month[0] = (YearMonthView) convertView.findViewById(R.id.year_month_item0);
+            year_month[1] = (YearMonthView) convertView.findViewById(R.id.year_month_item1);
+            year_month[2] = (YearMonthView) convertView.findViewById(R.id.year_month_item2);
+            year_month[3] = (YearMonthView) convertView.findViewById(R.id.year_month_item3);
+            year_month[4] = (YearMonthView) convertView.findViewById(R.id.year_month_item4);
+            year_month[5] = (YearMonthView) convertView.findViewById(R.id.year_month_item5);
+            year_month[6] = (YearMonthView) convertView.findViewById(R.id.year_month_item6);
+            year_month[7] = (YearMonthView) convertView.findViewById(R.id.year_month_item7);
+            year_month[8] = (YearMonthView) convertView.findViewById(R.id.year_month_item8);
+            year_month[9] = (YearMonthView) convertView.findViewById(R.id.year_month_item9);
+            year_month[10] = (YearMonthView) convertView.findViewById(R.id.year_month_item10);
+            year_month[11] = (YearMonthView) convertView.findViewById(R.id.year_month_item11);
+        }
     }
 }

@@ -12,12 +12,14 @@
         android:paddingTop="10dp"
         android:background="@color/color_88d0d0d0"/>
 
-    <ListView
-        android:id="@+id/lv_year"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_year"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@null"
-        android:scrollbars="none">
-    </ListView>
+        android:scrollbars="none"
+        android:layout_weight="1"
+        android:layout_alignTop="@+id/layout_bottom">
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

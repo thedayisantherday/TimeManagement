@@ -2,6 +2,7 @@ package com.timemanagement.zxg.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.timemanagement.zxg.activities.EventDayActivity;
 import com.timemanagement.zxg.activities.EventMonthActivity;
+import com.timemanagement.zxg.activities.MainActivity;
 import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.timemanagement.R;
@@ -134,8 +136,9 @@ public class EventMonthAdapter0 extends RecyclerView.Adapter<EventMonthAdapter0.
             viewHolder.llDays[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EventDayActivity.startSelf(mContext, _dayDateModel, null);
-                    ((EventMonthActivity)mContext).finish();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("dayDateModel", _dayDateModel);
+                    ((MainActivity)mContext).setFragment(0, bundle);
                 }
             });
         }

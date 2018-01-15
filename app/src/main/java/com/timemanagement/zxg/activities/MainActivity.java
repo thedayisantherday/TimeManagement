@@ -14,7 +14,7 @@ import com.timemanagement.zxg.utils.LogUtils;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener{
 
-    private TextView tv_today, tv_repeat/*, tv_out_date*/;
+    private TextView tv_today, tv_repeat, tv_out_date;
 
     private EventDayFragment eventDayFragment;
     private EventMonthFragment eventMonthFragment;
@@ -23,7 +23,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     //fragment类型，1:EventDayFragment，2:EventListFragment，
     // 0:EventMonthFragment，－1:eventYearFragment
-    private int type_fragment;
+    private int type_fragment = 1000;
     private final int TYPE_YEAR = -2;
     private final int TYPE_MONTH = -1;
     private final int TYPE_DAY = 0;
@@ -60,51 +60,45 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         tv_today.setOnClickListener(this);
         tv_repeat = (TextView) findViewById(R.id.tv_repeat);
         tv_repeat.setOnClickListener(this);
-//        tv_out_date = (TextView) findViewById(R.id.tv_out_date);
-//        tv_out_date.setOnClickListener(this);
+        tv_out_date = (TextView) findViewById(R.id.tv_out_date);
+        tv_out_date.setOnClickListener(this);
     }
 
     private void initData(){
-        type_fragment = 0;
-
         eventDayFragment = new EventDayFragment();
-        getFragmentManager().beginTransaction().replace(R.id.fl_content, eventDayFragment).commit();
-
         eventMonthFragment = new EventMonthFragment();
         eventYearFragment = new EventYearFragment();
         eventListFragment = new EventListFragment();
+
+        setFragment(TYPE_DAY, null);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_today:
-                setTab(0);
                 switch (type_fragment) {
-                    case 0:
-                        mViewHolder.iv_right1.setVisibility(View.VISIBLE);
-                        getFragmentManager().beginTransaction().replace(R.id.fl_content, eventDayFragment).commit();
+                    case TYPE_OUTDAY:
+                    case TYPE_REPEAT:
+                        setFragment(TYPE_DAY, null);
                         break;
-                    case -1:
+                    case TYPE_DAY:
+                        eventDayFragment.gotoToday();
+                        break;
+                    case TYPE_MONTH:
                         eventMonthFragment.gotoToday();
                         break;
-                    case -2:
+                    case TYPE_YEAR:
                         eventYearFragment.gotoToday();
                         break;
                 }
                 break;
             case R.id.tv_repeat:
-                mViewHolder.iv_right1.setVisibility(View.GONE);
-                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventListFragment).commit();
-                setTab(1);
-                type_fragment = 1;
+                setFragment(TYPE_REPEAT, null);
                 break;
-//            case R.id.tv_out_date:
-//                mViewHolder.iv_right1.setVisibility(View.GONE);
-//                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventListFragment).commit();
-//                setTab(2);
-//                type_fragment = 2;
-//                break;
+            case R.id.tv_out_date:
+                setFragment(TYPE_OUTDAY, null);
+                break;
             case R.id.iv_right:
                 EventEditActivity.startSelf(mContext, 0, null);
                 break;
@@ -117,41 +111,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                         LogUtils.i("ll_left onClick", "share btn is onClick");
                         break;
                     case -1:
-                        getFragmentManager().beginTransaction().replace(R.id.fl_content, eventYearFragment).commit();
-                        mViewHolder.iv_right1.setVisibility(View.GONE);
-                        mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
+                        setFragment(TYPE_YEAR, null);
                         break;
                     case 0:
-                        getFragmentManager().beginTransaction().replace(R.id.fl_content, eventMonthFragment).commit();
-                        mViewHolder.iv_right1.setVisibility(View.GONE);
+                        setFragment(TYPE_MONTH, null);
                         break;
                 }
-                if (type_fragment==-1 || type_fragment==0){
-                    type_fragment--;
-                }
-//                startActivity(new Intent(this, TestActivity.class));
         }
     }
 
-    private void setTab(int num){
-        switch (num){
-            case 0:
+    private void setTab(int type){
+        switch (type){
+            case TYPE_DAY:
                 tv_today.setTextColor(getResources().getColor(R.color.red));
                 tv_repeat.setTextColor(getResources().getColor(R.color.black));
-//                tv_out_date.setTextColor(getResources().getColor(R.color.black));
-                mViewHolder.iv_left.setImageResource(R.drawable.head_left);
+                tv_out_date.setTextColor(getResources().getColor(R.color.black));
                 break;
-            case 1:
+            case TYPE_REPEAT:
                 tv_repeat.setTextColor(getResources().getColor(R.color.red));
                 tv_today.setTextColor(getResources().getColor(R.color.black));
-//                tv_out_date.setTextColor(getResources().getColor(R.color.black));
-                mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
+                tv_out_date.setTextColor(getResources().getColor(R.color.black));
                 break;
-            case 2:
-//                tv_out_date.setTextColor(getResources().getColor(R.color.red));
+            case TYPE_OUTDAY:
+                tv_out_date.setTextColor(getResources().getColor(R.color.red));
                 tv_repeat.setTextColor(getResources().getColor(R.color.black));
                 tv_today.setTextColor(getResources().getColor(R.color.black));
-                mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
                 break;
         }
     }
@@ -169,19 +153,46 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         viewHolder.iv_right2.setOnClickListener(this);
     }
 
-    public void setFragment(int type){
+    public void setTopLefText (String topLefText, int visible) {
+        if (mViewHolder.tv_left.getVisibility() != visible) {
+            mViewHolder.tv_left.setVisibility(visible);
+        }
+        mViewHolder.tv_left.setText(topLefText);
+    }
+
+    public void setFragment(int type, Bundle argBundle){
+        if (type_fragment == type) {
+            return;
+        }
+
         type_fragment = type;
+        setTab(type);
+
         switch (type){
-            case -2:
-                break;
-            case -1:
-                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventMonthFragment).commit();
-                eventMonthFragment.gotoToday();
+            case TYPE_YEAR:
+                eventYearFragment.setArguments(argBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventYearFragment).commit(); // 是异步操作
+                mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
                 mViewHolder.iv_right1.setVisibility(View.GONE);
                 break;
-            case 0:
-                mViewHolder.iv_right1.setVisibility(View.VISIBLE);
+            case TYPE_MONTH:
+                eventMonthFragment.setArguments(argBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventMonthFragment).commit();
+                mViewHolder.iv_left.setImageResource(R.drawable.head_left);
+                mViewHolder.iv_right1.setVisibility(View.GONE);
+                break;
+            case TYPE_DAY:
+                eventDayFragment.setArguments(argBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_content, eventDayFragment).commit();
+                mViewHolder.iv_left.setImageResource(R.drawable.head_left);
+                mViewHolder.iv_right1.setVisibility(View.VISIBLE);
+                break;
+            case TYPE_OUTDAY:
+            case TYPE_REPEAT:
+//                eventListFragment.setArguments(argBundle);
+                getFragmentManager().beginTransaction().replace(R.id.fl_content, eventListFragment).commit();
+                mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
+                mViewHolder.iv_right1.setVisibility(View.GONE);
                 break;
         }
     }
