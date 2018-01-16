@@ -107,16 +107,6 @@ public class EventMonthFragment extends Fragment {
 
         /*mViewHolder.tv_left.setVisibility(View.VISIBLE);*/
         ((MainActivity)mActivity).setTopLefText(mYear+"年", View.VISIBLE);
-        if (mYear<=0){
-            mYear = mCalendar.get(Calendar.YEAR);
-        }
-        if (mMonth<=0){
-            mMonth = mCalendar.get(Calendar.MONTH)+1;
-        }
-
-        if ((mMonth != mCalendar.get(Calendar.MONTH)+1) || (mYear != mCalendar.get(Calendar.YEAR))){
-            isCurrent = false;
-        }
 
         offset =  (mYear-mCalendar.get(Calendar.YEAR))*12+mMonth-(mCalendar.get(Calendar.MONTH)+1);
         LogUtils.i("EventMonthActivity", "mYear:"+mYear+", mMonth:"+mMonth);
@@ -238,5 +228,11 @@ public class EventMonthFragment extends Fragment {
                 isFirst = false;
             }
         }
+    }
+
+    public Bundle getArgBundle () {
+        Bundle arguments = new Bundle();
+        arguments.putInt("year", mYear);
+        return arguments;
     }
 }

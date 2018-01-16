@@ -2,6 +2,7 @@ package com.timemanagement.zxg.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.timemanagement.zxg.activities.EventYearActivity;
 import com.timemanagement.zxg.activities.MainActivity;
+import com.timemanagement.zxg.adapter.EventYearAdapter;
 import com.timemanagement.zxg.adapter.EventYearAdapter1;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.model.YearDateModel;
@@ -30,20 +33,20 @@ public class EventYearFragment extends Fragment {
 
     private Activity mActivity;
     private RecyclerView rv_year;
+    private LinearLayoutManager recyclerLayoutManagement;
     private List<YearDateModel> mYearDateModels;
     private EventYearAdapter1 eventYearAdapter;
-    private LinearLayoutManager recyclerLayoutManagement;
     private Calendar mCalendar = Calendar.getInstance();
 
-    private int offset; // TODO 未作处理
     private boolean isFirst = true;
-
     private boolean isCurrent = true;
 
-    private final static int NUM_YEAR = 5;
+    private final static int NUM_YEAR = 7; // 当NUM_YEAR=5时，必须保证一屏内只有一个item，否则数据会乱；若一屏内有m个item，则NUM_YEAR=5+(m-1)*2;
     private final static int INIT_POSITION = Integer.MAX_VALUE/2-Integer.MAX_VALUE/2%NUM_YEAR+(NUM_YEAR-1)/2;
-
     private int frontPoint = INIT_POSITION;
+
+    private int offset;
+    private int mYear;
 
     @Nullable
     @Override
@@ -56,20 +59,28 @@ public class EventYearFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mActivity = getActivity();
+        recyclerLayoutManagement = new LinearLayoutManager(mActivity);
         rv_year = (RecyclerView) mActivity.findViewById(R.id.rv_year);
+        //使RecyclerView保持固定的大小，用于自身的优化
+        rv_year.setHasFixedSize(true);
+        rv_year.setLayoutManager(recyclerLayoutManagement);
         ((MainActivity)mActivity).setTopLefText("", View.GONE);
 
         initData();
     }
 
     private void initData(){
-        mYearDateModels = getYearList(mCalendar.get(Calendar.YEAR));
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mYear = arguments.getInt("year", mCalendar.get(Calendar.YEAR));
+        }
+        if (mYear<=0){
+            mYear = mCalendar.get(Calendar.YEAR);
+        }
+        offset = mYear-mCalendar.get(Calendar.YEAR);
+        mYearDateModels = getYearList(mYear);
+//        eventYearAdapter = new EventYearAdapter(mActivity, mYearDateModels);
         eventYearAdapter = new EventYearAdapter1(mActivity, mYearDateModels);
-        recyclerLayoutManagement = new LinearLayoutManager(mActivity);
-        //使RecyclerView保持固定的大小，用于自身的优化
-        rv_year.setHasFixedSize(true);
-        rv_year.setLayoutManager(recyclerLayoutManagement);
-
         rv_year.setAdapter(eventYearAdapter);
         rv_year.scrollToPosition(INIT_POSITION);
         rv_year.setOnScrollListener(new RecyclerViewOnScrollListener());

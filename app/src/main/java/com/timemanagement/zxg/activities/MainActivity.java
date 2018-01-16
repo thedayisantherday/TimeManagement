@@ -9,6 +9,7 @@ import com.timemanagement.zxg.fragment.EventDayFragment;
 import com.timemanagement.zxg.fragment.EventListFragment;
 import com.timemanagement.zxg.fragment.EventMonthFragment;
 import com.timemanagement.zxg.fragment.EventYearFragment;
+import com.timemanagement.zxg.model.DayDateModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.LogUtils;
 
@@ -111,10 +112,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                         LogUtils.i("ll_left onClick", "share btn is onClick");
                         break;
                     case -1:
-                        setFragment(TYPE_YEAR, null);
+                        setFragment(TYPE_YEAR, eventMonthFragment.getArgBundle());
                         break;
                     case 0:
-                        setFragment(TYPE_MONTH, null);
+                        setFragment(TYPE_MONTH, eventDayFragment.getArgBundle());
                         break;
                 }
         }
@@ -164,6 +165,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         if (type_fragment == type) {
             return;
         }
+
 
         type_fragment = type;
         setTab(type);

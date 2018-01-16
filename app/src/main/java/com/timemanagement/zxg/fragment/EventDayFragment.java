@@ -43,19 +43,18 @@ public class EventDayFragment extends Fragment {
     private TextView tv_date_detail;
     private EditText et_date_detail;
     private ScrollView sv_event_container;
-    public static EventContainerView view_event_container;
 
+    public static EventContainerView view_event_container;
     public static EventDialog mEventDialog;
     private ViewPagerAdapter mViewPagerAdapter;
 
-    private List<EventDayView> vp_views = new ArrayList<EventDayView>();
+    private List<EventDayView> vp_views;
     private List<DayDateModel[]> mDayDateModels = new ArrayList<>();
     private DayDateModel mDayDateModel;
 
     private Calendar calendar = Calendar.getInstance();
     private int mPosition = 1; //当前banner的位置
     private int offsetWeek; //与当前日期相差多少周
-
     public static int mEventDialogCount = 2;
 
     @Override
@@ -120,9 +119,7 @@ public class EventDayFragment extends Fragment {
         tv_date_detail = (TextView) mActivity.findViewById(R.id.tv_date_detail);
         et_date_detail = (EditText) mActivity.findViewById(R.id.et_date_detail);
 
-        if (vp_views.size() > 0) {
-            vp_views.clear();
-        }
+        vp_views = new ArrayList<EventDayView>();
         for (int i = 0; i < 6; i++) {
             EventDayView eventDayView = new EventDayView(mActivity);
             /**
@@ -305,6 +302,8 @@ public class EventDayFragment extends Fragment {
         vp_date.setCurrentItem(2);
         mPosition = 2;
         offsetWeek = 0;
+        mDayDateModel = mDayDateModels.get(1)[EventDayView.mWeekCheck];
+        ((MainActivity)mActivity).setTopLefText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月", View.VISIBLE);
     }
 
     /**
@@ -417,5 +416,14 @@ public class EventDayFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public Bundle getArgBundle () {
+        Bundle arguments = new Bundle();
+        if (mDayDateModel != null) {
+            arguments.putInt("year", Integer.valueOf(mDayDateModel.getYear()));
+            arguments.putInt("month", Integer.valueOf(mDayDateModel.getMonth()));
+        }
+        return arguments;
     }
 }
