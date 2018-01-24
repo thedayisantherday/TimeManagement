@@ -66,6 +66,11 @@ public class EventYearFragment extends Fragment {
         eventYearAdapter = new EventYearAdapter1(mActivity);
         rv_year.setAdapter(eventYearAdapter);
         rv_year.setOnScrollListener(new RecyclerViewOnScrollListener());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         rv_year.scrollToPosition(mYear-1);
     }
 
