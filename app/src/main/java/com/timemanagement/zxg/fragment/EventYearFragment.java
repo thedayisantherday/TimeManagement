@@ -2,28 +2,18 @@ package com.timemanagement.zxg.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.timemanagement.zxg.activities.EventYearActivity;
 import com.timemanagement.zxg.activities.MainActivity;
-import com.timemanagement.zxg.adapter.EventYearAdapter;
 import com.timemanagement.zxg.adapter.EventYearAdapter1;
-import com.timemanagement.zxg.model.MonthDateModel;
-import com.timemanagement.zxg.model.YearDateModel;
 import com.timemanagement.zxg.timemanagement.R;
-import com.timemanagement.zxg.utils.DateModelUtil;
-import com.timemanagement.zxg.utils.LogUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Created by zxg on 17/2/22.
@@ -40,7 +30,6 @@ public class EventYearFragment extends Fragment {
     private boolean isCurrent = false;
     private int mYear;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_event_year, container, false);
