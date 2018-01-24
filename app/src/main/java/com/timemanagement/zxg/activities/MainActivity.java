@@ -23,7 +23,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     private EventListFragment eventListFragment;
 
     //fragment类型，1:EventDayFragment，2:EventListFragment，
-    // 0:EventMonthFragment，－1:eventYearFragment
+    // 0:EventMonthFragment，-1:eventYearFragment
     private int type_fragment = 1000;
     private final int TYPE_YEAR = -2;
     private final int TYPE_MONTH = -1;

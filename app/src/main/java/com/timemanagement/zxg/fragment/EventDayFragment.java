@@ -302,7 +302,7 @@ public class EventDayFragment extends Fragment {
         vp_date.setCurrentItem(2);
         mPosition = 2;
         offsetWeek = 0;
-        mDayDateModel = mDayDateModels.get(1)[EventDayView.mWeekCheck];
+        mDayDateModel = mDayDateModels.get(1)[EventDayView.mWeekCheck - 1];
         ((MainActivity)mActivity).setTopLefText(mDayDateModel.getYear()+"年"+mDayDateModel.getMonth()+"月", View.VISIBLE);
     }
 

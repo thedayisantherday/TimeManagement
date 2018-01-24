@@ -15,9 +15,11 @@ import com.timemanagement.zxg.activities.activitycontrol.ActivityManager;
 import com.timemanagement.zxg.model.MonthDateModel;
 import com.timemanagement.zxg.model.YearDateModel;
 import com.timemanagement.zxg.timemanagement.R;
+import com.timemanagement.zxg.utils.DateModelUtil;
 import com.timemanagement.zxg.widget.YearMonthView;
 import com.timemanagement.zxg.widget.YearMonthView0;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,13 +27,9 @@ import java.util.List;
  */
 
 public class EventYearAdapter1 extends RecyclerView.Adapter<EventYearAdapter1.RecyclerViewHolder> {
-    private Context mContext;
-    private List<YearDateModel> yearDateModels;
 
-    public EventYearAdapter1(Context context, List<YearDateModel> yearDateModels){
-        mContext = context;
-        this.yearDateModels = yearDateModels;
-    }
+    private Context mContext;
+
 
     public EventYearAdapter1(Context context){
         mContext = context;
@@ -47,7 +45,10 @@ public class EventYearAdapter1 extends RecyclerView.Adapter<EventYearAdapter1.Re
     @Override
     public void onBindViewHolder(RecyclerViewHolder viewHolder, final int position) {
 
-        final YearDateModel yearDateModel = getItem(position);
+        final YearDateModel yearDateModel = new YearDateModel();
+        yearDateModel.setYear(position+1+"");
+        yearDateModel.setMonthDateModels(getMonthList(position+1));
+
         viewHolder.tv_year.setText(yearDateModel.getYear()+"年");
         viewHolder.tv_lunar_year.setText(yearDateModel.getLunarYear()+"年");
         for (int i = 0; i < yearDateModel.getMonthDateModels().size(); i++) {
@@ -70,15 +71,14 @@ public class EventYearAdapter1 extends RecyclerView.Adapter<EventYearAdapter1.Re
         return Integer.MAX_VALUE;
     }
 
-    public YearDateModel getItem(int position) {
-        if (yearDateModels == null || yearDateModels.size() == 0){
-            return null;
+    public List<MonthDateModel> getMonthList(int year){
+        List<MonthDateModel> list =  new ArrayList<MonthDateModel>();
+        if (year>0){
+            for (int i = 1; i <= 12; i++) {
+                list.add(DateModelUtil.getMonthDateModel(year, i, false));
+            }
         }
-        int _position = position%yearDateModels.size();
-        if (_position < 0){
-            _position = _position + yearDateModels.size();
-        }
-        return yearDateModels.get(_position);
+        return list;
     }
 
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
