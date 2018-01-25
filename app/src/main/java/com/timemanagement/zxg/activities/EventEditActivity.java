@@ -1,5 +1,6 @@
 package com.timemanagement.zxg.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,8 +30,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.timemanagement.zxg.activities.EventDayActivity.mEventDialog;
-
 public class EventEditActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText et_title, et_comment;
@@ -48,6 +47,7 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
 
     private static final int TYPE_DATE=0, TYPE_REMIND=1, TYPE_REMIND_AGAIN=2,
             TYPE_EMERGENCY=3, TYPE_IMPORTANCE=4, TYPE_REPEAT=5, TYPE_REPEAT_END=6;
+    public static int RESULT_CODE = 8;
     private int popupWindowType;
 
     private String[] emergencys = {"非常紧急", "紧急", "一般"/*, "不紧急"*/};
@@ -160,8 +160,8 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
             mEventModel = new EventModel();
 
             // 为每个事件添加一个弹窗
-            mEventDialog = new EventDialog(EventDayActivity.mContext);
-            mEventDialog.setView(EventDayActivity.view_event_container, 150, 100);
+            MainActivity.eventDayFragment.mEventDialog = new EventDialog(mthis);
+            MainActivity.eventDayFragment.mEventDialog.setView(MainActivity.eventDayFragment.view_event_container, 150, 100);
         }
 
         for (int i = 0; i < 12; i++) {
@@ -252,8 +252,8 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
 
                     @Override
                     public void onPositive() {
-                        EventDayActivity.view_event_container.removeView(
-                                EventDayActivity.mEventDialog.view_event_dialog);
+                        MainActivity.eventDayFragment.view_event_container.removeView(
+                                MainActivity.eventDayFragment.mEventDialog.view_event_dialog);
                         if (mDatabaseUtil == null) {
                             mDatabaseUtil = new DatabaseUtil(mContext);
                         }
@@ -324,11 +324,11 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.tv_left:
                 if (mType == 0) {
-                    EventDayActivity.view_event_container.removeView(
-                            EventDayActivity.mEventDialog.view_event_dialog);
+                    MainActivity.eventDayFragment.view_event_container.removeView(
+                            MainActivity.eventDayFragment.mEventDialog.view_event_dialog);
                 }
 //                this.finish();
-                EventDayActivity.startSelf(mContext, null, null);
+//                EventDayActivity.startSelf(mContext, null, null);
                 ActivityManager.getInstance().finishActivity(mthis);
                 break;
             case R.id.tv_right:
@@ -339,14 +339,17 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
                     }
                     if (mType == 0) {
                         mDatabaseUtil.insertReturnLatest(mEventModel);
-                        EventDayActivity.mEventDialogCount++;
+                        MainActivity.eventDayFragment.mEventDialogCount++;
                     } else {
                         mDatabaseUtil.updateData(mEventModel);
                     }
 
                     resetRemindNotification();
 
-                    EventDayActivity.startSelf(mContext, null, mEventModel);
+                    Bundle arguments = new Bundle();
+                    arguments.putSerializable("eventModel", mEventModel);
+                    setResult(RESULT_CODE, new Intent().putExtra("arguments", arguments));
+//                    EventDayActivity.startSelf(mContext, null, mEventModel);
 //                    Intent intent = new Intent(mContext, EventDayActivity.class);
 //                    intent.putExtra("event_model", mEventModel);
 //                    ((EventEditActivity)mContext).setResult(RESULT_OK, intent);
@@ -478,13 +481,13 @@ public class EventEditActivity extends BaseActivity implements View.OnClickListe
      * @param type // 0:新增，1:修改
      * @param eventModel
      */
-    public static void startSelf(Context context, int type, EventModel eventModel){
+    public static void startSelf(Activity context, int type, EventModel eventModel){
         LogUtils.i("EventEditActivity startSelf", context.toString());
         Intent intent = new Intent(context, EventEditActivity.class);
         // 解决点击事件EventViewDialog，跳转EventEditActivity报错的问题，但是也会有问题
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("type", type);
         intent.putExtra("eventModel", eventModel);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, MainActivity.REQUEST_CODE);
     }
 }

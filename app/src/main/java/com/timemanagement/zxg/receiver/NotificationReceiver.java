@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.timemanagement.zxg.activities.EventDayActivity;
+import com.timemanagement.zxg.activities.MainActivity;
 import com.timemanagement.zxg.activities.activitycontrol.MyApplication;
 import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
@@ -17,8 +17,6 @@ import com.timemanagement.zxg.utils.LogUtils;
 import com.timemanagement.zxg.utils.TimeUtils;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.timemanagement.zxg.activities.EventDayActivity.mContext;
-
 /**
  * Created by zxg on 17/5/11.
  */
@@ -26,6 +24,7 @@ import static com.timemanagement.zxg.activities.EventDayActivity.mContext;
 public class NotificationReceiver extends BroadcastReceiver {
 
     private static MyApplication myApplication = MyApplication.getInstance();
+    private Context mContext;
     private EventModel eventModel;
     private Bitmap mBitmap;
     private NotificationManager mNotificationManager;
@@ -50,7 +49,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     private void sendRemindBroadcast() {
         if (eventModel != null) {
             LogUtils.i("NotificationReceiver111111", eventModel.getTitle());
-            Intent intent = new Intent(mContext, EventDayActivity.class);
+            Intent intent = new Intent(mContext, MainActivity.class);
             PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent,
                     PendingIntent.FLAG_CANCEL_CURRENT);
             Notification notification = new Notification.Builder(mContext)

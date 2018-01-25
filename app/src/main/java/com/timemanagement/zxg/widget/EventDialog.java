@@ -1,5 +1,6 @@
 package com.timemanagement.zxg.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -7,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.timemanagement.zxg.activities.EventDayActivity;
 import com.timemanagement.zxg.activities.EventEditActivity;
+import com.timemanagement.zxg.activities.MainActivity;
 import com.timemanagement.zxg.model.EventModel;
 import com.timemanagement.zxg.timemanagement.R;
 import com.timemanagement.zxg.utils.DimensionUtils;
@@ -21,7 +22,7 @@ import com.timemanagement.zxg.utils.Tools;
 
 public class EventDialog {
 
-    private Context mContext;
+    private Activity mActivity;
 
     public View view_event_dialog, view_emergency_sign;
     private TextView tv_event_dialog;
@@ -31,14 +32,14 @@ public class EventDialog {
     private int[] emergencyColor1 = new int[]{Color.RED, Color.rgb(141, 75, 187), Color.BLUE};
     private int[] emergencyColor2 = new int[]{Color.argb(96, 255, 0, 0), Color.argb(96, 141, 75, 187), Color.argb(100, 150, 170, 215)};
 
-    public EventDialog(Context context) {
-        mContext = context;
+    public EventDialog(Activity activity) {
+        mActivity = activity;
 
         initView();
     }
 
     private void initView() {
-        view_event_dialog = View.inflate(mContext, R.layout.layout_event_dialog, null);
+        view_event_dialog = View.inflate(mActivity, R.layout.layout_event_dialog, null);
         view_emergency_sign = view_event_dialog.findViewById(R.id.view_emergency_sign);
         tv_event_dialog = (TextView) view_event_dialog.findViewById(R.id.tv_event_dialog);
         tv_event_dialog.setText("新建事件");
@@ -49,9 +50,9 @@ public class EventDialog {
         view_event_dialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventDayActivity.mEventDialog = self;
+                MainActivity.eventDayFragment.mEventDialog = self;
                 LogUtils.i("view_event_dialog onClick","view_event_dialog onClick");
-                EventEditActivity.startSelf(mContext, 1, mEventModel);
+                EventEditActivity.startSelf(mActivity, 1, mEventModel);
             }
         });
     }

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.timemanagement.zxg.activities.MainActivity;
-import com.timemanagement.zxg.adapter.EventYearAdapter1;
+import com.timemanagement.zxg.adapter.EventYearAdapter;
 import com.timemanagement.zxg.timemanagement.R;
 
 import java.util.Calendar;
@@ -24,7 +24,7 @@ public class EventYearFragment extends Fragment {
     private Activity mActivity;
     private RecyclerView rv_year;
     private LinearLayoutManager recyclerLayoutManagement;
-    private EventYearAdapter1 eventYearAdapter;
+    private EventYearAdapter eventYearAdapter;
     private Calendar mCalendar = Calendar.getInstance();
 
     private boolean isCurrent = false;
@@ -63,7 +63,7 @@ public class EventYearFragment extends Fragment {
             mYear = mCalendar.get(Calendar.YEAR);
         }
 //        eventYearAdapter = new EventYearAdapter(mActivity, mYearDateModels);
-        eventYearAdapter = new EventYearAdapter1(mActivity);
+        eventYearAdapter = new EventYearAdapter(mActivity);
         rv_year.setAdapter(eventYearAdapter);
         rv_year.setOnScrollListener(new RecyclerViewOnScrollListener());
     }

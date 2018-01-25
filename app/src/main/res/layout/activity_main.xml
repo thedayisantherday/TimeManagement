@@ -28,7 +28,7 @@
         <TextView
             android:id="@+id/tv_today"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="今天"
@@ -41,7 +41,7 @@
         <TextView
             android:id="@+id/tv_repeat"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="重复"
@@ -54,35 +54,12 @@
         <TextView
             android:id="@+id/tv_out_date"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:text="已过期"
             android:textSize="@dimen/sp_16"
             android:textColor="@color/black" />
-        <!--<TextView
-            android:id="@+id/tv_today"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="今天"
-            android:textSize="@dimen/sp_16"
-            android:textColor="@color/red"/>
-        <View
-            android:layout_width="1px"
-            android:layout_height="match_parent"
-            android:background="@color/black"/>
-
-        <TextView
-            android:id="@+id/tv_repeat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="重复"
-            android:textSize="@dimen/sp_16"
-            android:textColor="@color/black"/>-->
     </LinearLayout>
 
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.timemanagement.zxg.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,27 +9,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.timemanagement.zxg.activities.EventMonthActivity;
 import com.timemanagement.zxg.activities.MainActivity;
-import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.adapter.EventMonthAdapter;
-import com.timemanagement.zxg.adapter.EventMonthAdapter0;
-import com.timemanagement.zxg.adapter.EventMonthAdapter1;
-import com.timemanagement.zxg.model.DayDateModel;
-import com.timemanagement.zxg.model.MonthDateModel;
-import com.timemanagement.zxg.model.YearDateModel;
 import com.timemanagement.zxg.timemanagement.R;
-import com.timemanagement.zxg.utils.DateModelUtil;
 import com.timemanagement.zxg.utils.LogUtils;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by zxg on 17/2/9.
@@ -41,13 +28,11 @@ public class EventMonthFragment extends Fragment {
     private static String TAG = EventMonthFragment.class.getSimpleName();
 
     private Activity mActivity;
-    private ListView lv_event_list;
     private RecyclerView rv_month;
     private LinearLayoutManager recyclerLayoutManagement;
     private TextView tv_month;
-    private View view_line;
 
-    private EventMonthAdapter1 eventMonthAdapter;
+    private EventMonthAdapter eventMonthAdapter;
     private Calendar mCalendar = Calendar.getInstance();
     private boolean isCurrent = true;
     private int frontPoint;
@@ -72,8 +57,6 @@ public class EventMonthFragment extends Fragment {
     private void initView() {
         tv_month = (TextView) mActivity.findViewById(R.id.tv_month);
         rv_month = (RecyclerView) mActivity.findViewById(R.id.rv_month);
-        lv_event_list = (ListView) mActivity.findViewById(R.id.lv_event_list);
-        view_line = mActivity.findViewById(R.id.view_line);
     }
 
     private void initData(){
@@ -97,7 +80,7 @@ public class EventMonthFragment extends Fragment {
         ((MainActivity)mActivity).setTopLefText(mYear+"年", View.VISIBLE);
 
         LogUtils.i("EventMonthActivity", "mYear:"+mYear+", mMonth:"+mMonth);
-        eventMonthAdapter = new EventMonthAdapter1(mActivity);
+        eventMonthAdapter = new EventMonthAdapter(mActivity);
         rv_month.setAdapter(eventMonthAdapter);
         //使RecyclerView保持固定的大小，用于自身的优化
         rv_month.setHasFixedSize(true);

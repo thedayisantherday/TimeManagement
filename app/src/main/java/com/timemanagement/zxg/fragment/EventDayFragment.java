@@ -13,10 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.timemanagement.zxg.activities.EventDayActivity;
 import com.timemanagement.zxg.activities.EventEditActivity;
 import com.timemanagement.zxg.activities.MainActivity;
-import com.timemanagement.zxg.activities.activitycontrol.BaseActivity;
 import com.timemanagement.zxg.adapter.ViewPagerAdapter;
 import com.timemanagement.zxg.database.DatabaseUtil;
 import com.timemanagement.zxg.model.DayDateModel;
@@ -314,8 +312,6 @@ public class EventDayFragment extends Fragment {
             @Override
             public void run() {
                 scrollTo(view_event_container.mCurTimeHeight);
-                LogUtils.i("EventDayActivity", "EventDayActivity EventContainerView: "+view_event_container.mTotalHeight);
-                LogUtils.i("EventDayActivity", "EventDayActivity sv_event_container: "+sv_event_container.getHeight());
             }
         }, 500);
     }

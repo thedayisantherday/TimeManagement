@@ -1,5 +1,6 @@
 package com.timemanagement.zxg.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,13 +19,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private TextView tv_today, tv_repeat, tv_out_date;
 
-    private EventDayFragment eventDayFragment;
+    public static EventDayFragment eventDayFragment;
     private EventMonthFragment eventMonthFragment;
     private EventYearFragment eventYearFragment;
     private EventListFragment eventListFragment;
 
     //fragment类型，1:EventDayFragment，2:EventListFragment，
     // 0:EventMonthFragment，-1:eventYearFragment
+    public static int REQUEST_CODE = 8;
     private final int TYPE_YEAR = -2;
     private final int TYPE_MONTH = -1;
     private final int TYPE_DAY = 0;
@@ -37,22 +39,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setView(R.layout.activity_main);
-
-        /*Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
-        String d = dateFormat.format(date);
-        Calendar today = Calendar.getInstance();
-        try {
-            today.setTime(chineseDateFormat.parse(d));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        LunarUtils lunar = new LunarUtils(today);
-        System.out.println("北京时间：" + chineseDateFormat.format(today.getTime())
-                + "　农历" + lunar);*/
-
-//        LunarUtils lunarUtils = new LunarUtils();
-//        lunarUtils.getLunar();
 
         initView();
         initData();
@@ -103,7 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 setFragment(TYPE_OUTDAY, null);
                 break;
             case R.id.iv_right:
-                EventEditActivity.startSelf(mContext, 0, null);
+                EventEditActivity.startSelf(mthis, 0, null);
                 break;
             case R.id.ll_left:
                 switch (type_fragment){
@@ -205,9 +191,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == EventEditActivity.RESULT_CODE && requestCode == REQUEST_CODE) {
+            Bundle arguments = data.getBundleExtra("arguments");
+            setFragment(TYPE_DAY, arguments);
+        }
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Toast.makeText(this, "退出App中...", Toast.LENGTH_SHORT);
+            Toast.makeText(mContext, "退出App中...", Toast.LENGTH_SHORT).show();
         }
         return super.onKeyDown(keyCode, event);
     }

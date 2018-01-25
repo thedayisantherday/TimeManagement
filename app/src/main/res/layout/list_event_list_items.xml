@@ -26,14 +26,14 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/sp_12"
                 android:layout_gravity="right"
-                android:text="8:00"/>
+                tools:text="8:00"/>
             <TextView
                 android:id="@+id/tv_end_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_10"
                 android:textSize="@dimen/sp_12"
-                android:text="9:00"/>
+                tools:text="9:00"/>
         </LinearLayout>
 
         <View
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textSize="@dimen/sp_16"
-                android:text="京东撒酒疯 i 熬过就能够恢复付款即发啊健康的啊地方啊"
+                tools:text="京东撒酒疯 i 熬过就能够恢复付款即发啊健康的啊地方啊"
                 />
             <TextView
                 android:id="@+id/tv_time_left"
@@ -64,7 +64,7 @@
                 android:paddingTop="5dp"
                 android:textSize="@dimen/sp_12"
                 android:textColor="@color/red"
-                android:text="2小时"/>
+                tools:text="2小时"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/sp_16"
-            android:text="农历一月" />
+            tools:text="农历一月" />
 
         <TextView
             android:id="@+id/tv_group_lunar"
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textSize="@dimen/sp_12"
-            android:text="农历一月"/>
+            tools:text="农历一月"/>
     </RelativeLayout>
 
 </LinearLayout>

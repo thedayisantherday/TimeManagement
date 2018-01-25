@@ -29,12 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.timemanagement.zxg.activities.EventEditActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.TestActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.EventDayActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.EventMonthActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.EventYearActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.EventRepeatActivity" />
-        <activity android:name="com.timemanagement.zxg.activities.EventListActivity" />
 
         <!--&lt;!&ndash; android:process="system" 不能保存实例到应用程序 &ndash;&gt;
         <service
