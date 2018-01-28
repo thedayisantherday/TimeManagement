@@ -5,22 +5,30 @@
     android:layout_height="match_parent"
     android:padding="@dimen/dp_5">
 
-    <TextView
-        android:id="@+id/tv_year"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_8"
-        android:paddingBottom="@dimen/dp_8"
+        android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_10"
-        android:paddingRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_16"
-        android:text="每年"
-        android:background="@color/color_efeff4"/>
+        android:layout_marginBottom="@dimen/dp_2"
+        android:background="@drawable/bg_btn_green">
 
-    <View
-        android:id="@+id/view_year"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/tv_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="每年"
+            android:textSize="@dimen/sp_14"/>
+
+        <ImageView
+            android:id="@+id/iv_year"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/dp_12"
+            android:src="@drawable/arrow_down"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_event_years"
@@ -30,22 +38,31 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/tv_month"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_8"
-        android:paddingBottom="@dimen/dp_8"
+        android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_10"
-        android:paddingRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_16"
-        android:text="每月"
-        android:background="@color/color_efeff4"/>
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/dp_2"
+        android:background="@drawable/bg_btn_green">
 
-    <View
-        android:id="@+id/view_month"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/tv_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="每月"
+            android:textSize="@dimen/sp_14"/>
+
+        <ImageView
+            android:id="@+id/iv_month"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/dp_12"
+            android:src="@drawable/arrow_down"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_event_months"
@@ -55,22 +72,31 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/tv_week"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_8"
-        android:paddingBottom="@dimen/dp_8"
+        android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_10"
-        android:paddingRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_16"
-        android:text="每周"
-        android:background="@color/color_efeff4"/>
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/dp_2"
+        android:background="@drawable/bg_btn_green">
 
-    <View
-        android:id="@+id/view_week"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/tv_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="每周"
+            android:textSize="@dimen/sp_14"/>
+
+        <ImageView
+            android:id="@+id/iv_week"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/dp_12"
+            android:src="@drawable/arrow_down"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_event_weeks"
@@ -80,22 +106,31 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/tv_weekday"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_8"
-        android:paddingBottom="@dimen/dp_8"
+        android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_10"
-        android:paddingRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_16"
-        android:text="工作日"
-        android:background="@color/color_efeff4"/>
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/dp_2"
+        android:background="@drawable/bg_btn_green">
 
-    <View
-        android:id="@+id/view_weekday"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/tv_weekday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="工作日"
+            android:textSize="@dimen/sp_14"/>
+
+        <ImageView
+            android:id="@+id/iv_weekday"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/dp_12"
+            android:src="@drawable/arrow_down"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_event_weekdays"
@@ -105,22 +140,31 @@
 
     </android.support.v7.widget.RecyclerView>
 
-    <TextView
-        android:id="@+id/tv_day"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_8"
-        android:paddingBottom="@dimen/dp_8"
+        android:layout_height="30dp"
         android:paddingLeft="@dimen/dp_10"
-        android:paddingRight="@dimen/dp_10"
-        android:textSize="@dimen/sp_16"
-        android:text="每天"
-        android:background="@color/color_efeff4"/>
+        android:gravity="center_vertical"
+        android:layout_marginBottom="@dimen/dp_2"
+        android:background="@drawable/bg_btn_green">
 
-    <View
-        android:id="@+id/view_days"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        <TextView
+            android:id="@+id/tv_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="每天"
+            android:textSize="@dimen/sp_14"/>
+
+        <ImageView
+            android:id="@+id/iv_day"
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/dp_12"
+            android:src="@drawable/arrow_up"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_event_days"

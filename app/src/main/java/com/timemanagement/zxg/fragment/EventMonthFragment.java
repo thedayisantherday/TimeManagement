@@ -37,6 +37,7 @@ public class EventMonthFragment extends Fragment {
     private boolean isCurrent = true;
     private int frontPoint;
     private int mYear, mMonth;
+    private Bundle mArgumentBundle;
 
     @Nullable
     @Override
@@ -60,10 +61,9 @@ public class EventMonthFragment extends Fragment {
     }
 
     private void initData(){
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mYear = arguments.getInt("year", mCalendar.get(Calendar.YEAR));
-            mMonth = arguments.getInt("month", mCalendar.get(Calendar.MONTH)+1);
+        if (mArgumentBundle != null) {
+            mYear = mArgumentBundle.getInt("year", mCalendar.get(Calendar.YEAR));
+            mMonth = mArgumentBundle.getInt("month", mCalendar.get(Calendar.MONTH)+1);
         }
         if (mYear<=0){
             mYear = mCalendar.get(Calendar.YEAR);
@@ -145,6 +145,14 @@ public class EventMonthFragment extends Fragment {
         }
         behind = (month == mCalendar.get(Calendar.MONTH)+1) && (year == mCalendar.get(Calendar.YEAR));
         return front || behind;
+    }
+
+    public Bundle getArgumentBundle() {
+        return mArgumentBundle;
+    }
+
+    public void setArgumentBundle(Bundle argumentBundle) {
+        this.mArgumentBundle = argumentBundle;
     }
 
     public Bundle getArgBundle () {

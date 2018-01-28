@@ -163,19 +163,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         switch (type){
             case TYPE_YEAR:
-                eventYearFragment.setArguments(argBundle);
+                eventYearFragment.setArgumentBundle(argBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_content, eventYearFragment).commit(); // 是异步操作
                 mViewHolder.iv_left.setImageResource(R.drawable.icon_share);
                 mViewHolder.iv_right1.setVisibility(View.GONE);
                 break;
             case TYPE_MONTH:
-                eventMonthFragment.setArguments(argBundle);
+                eventMonthFragment.setArgumentBundle(argBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_content, eventMonthFragment).commit();
                 mViewHolder.iv_left.setImageResource(R.drawable.head_left);
                 mViewHolder.iv_right1.setVisibility(View.GONE);
                 break;
             case TYPE_DAY:
-                eventDayFragment.setArguments(argBundle);
+                eventDayFragment.setArgumentBundle(argBundle);
                 getFragmentManager().beginTransaction().replace(R.id.fl_content, eventDayFragment).commit();
                 mViewHolder.iv_left.setImageResource(R.drawable.head_left);
                 mViewHolder.iv_right1.setVisibility(View.VISIBLE);
@@ -193,6 +193,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        type_fragment = 1000;
         if (resultCode == EventEditActivity.RESULT_CODE && requestCode == REQUEST_CODE) {
             Bundle arguments = data.getBundleExtra("arguments");
             setFragment(TYPE_DAY, arguments);

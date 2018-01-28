@@ -49,6 +49,7 @@ public class EventDayFragment extends Fragment {
     private List<EventDayView> vp_views;
     private List<DayDateModel[]> mDayDateModels = new ArrayList<>();
     private DayDateModel mDayDateModel;
+    private Bundle mArgumentBundle;
 
     private Calendar calendar = Calendar.getInstance();
     private int mPosition = 1; //当前banner的位置
@@ -75,19 +76,17 @@ public class EventDayFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // 获取Fragment的参数
-        Bundle arguments = getArguments();
-        if (arguments == null) {
+        if (mArgumentBundle == null) {
             gotoToday();
         } else {
-            mDayDateModel = (DayDateModel) arguments.getSerializable("dayDateModel");
+            mDayDateModel = (DayDateModel) mArgumentBundle.getSerializable("dayDateModel");
             if (mDayDateModel != null) {
                 calendar.set(Integer.valueOf(mDayDateModel.getYear()),
                         Integer.valueOf(mDayDateModel.getMonth()) - 1, Integer.valueOf(mDayDateModel.getDay()));
                 EventDayView.mWeekCheck = calendar.get(Calendar.DAY_OF_WEEK);
             }
 
-            EventModel _eventModel = (EventModel) arguments.getSerializable("eventModel");
+            EventModel _eventModel = (EventModel) mArgumentBundle.getSerializable("eventModel");
             if (_eventModel != null) {
                 calendar.set(_eventModel.getDate().getYear() + 1900,
                         _eventModel.getDate().getMonth(), _eventModel.getDate().getDate());
@@ -412,6 +411,14 @@ public class EventDayFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public Bundle getArgumentBundle() {
+        return mArgumentBundle;
+    }
+
+    public void setArgumentBundle(Bundle argumentBundle) {
+        this.mArgumentBundle = argumentBundle;
     }
 
     public Bundle getArgBundle () {
